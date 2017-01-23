@@ -35,7 +35,7 @@ while not done:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			done = True
-		elif event.type == pygame.MOUSEBUTTONDOWN:
+		if event.type == pygame.MOUSEBUTTONDOWN:
 			# Get the position from mouse click
 			pos = pygame.mouse.get_pos()
 
