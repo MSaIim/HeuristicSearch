@@ -6,6 +6,7 @@ from Cell import Type
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREY = (192, 192, 192)
+GREEN = (69, 186, 139)
 
 # Width and Height of a Cell along with the margin between them
 WIDTH = 5
@@ -54,6 +55,8 @@ while not done:
 			color = WHITE
 			if grid.cells[row][column].type == Type.HARD:
 				color = GREY
+			if grid.cells[row][column].isHighway == True:
+				color = GREEN
 			pygame.draw.rect(screen, color, [(MARGIN + WIDTH) * column + MARGIN, (MARGIN + HEIGHT) * row + MARGIN, WIDTH, HEIGHT])
 
 	# Limit to 60 frames per second
