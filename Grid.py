@@ -12,6 +12,7 @@ class Grid(object):
 
 	def __init__(self):
 		self.initialize()
+		print("")
 
 
 	def initialize(self):
