@@ -9,8 +9,10 @@ class Grid(object):
 	NUMPOINTS = 8
 	NUMHIGHWAYS = 4
 
+
 	def __init__(self):
 		self.initialize()
+
 
 	def initialize(self):
 		# Create 2D array of Cells (120 rows by 160 columns)
@@ -21,11 +23,13 @@ class Grid(object):
 		index = 0
 
 		# Select 8 distinct random coordinates
+		print("Center Points:")
 		while(index < self.NUMPOINTS):
 			temp = Point(randrange(0, self.ROWS-1), randrange(0, self.COLUMNS-1))
 			if(temp not in locations):
 				locations[index] = temp
 				index += 1
+				print("\t", locations[index-1].x, locations[index-1].y)
 
 		# 50% probability to make a cell HARD TO TRAVERSE around the coordinates chosen above
 		for location in locations:
@@ -36,6 +40,7 @@ class Grid(object):
 							self.cells[row][col].type = Type.HARD
 
 		# Create a highway
+		print("\nHighway Points:")
 		for index in range(self.NUMHIGHWAYS):
 			edges = [Point(0,0) for x in range(self.NUMHIGHWAYS)]
 			
@@ -43,6 +48,8 @@ class Grid(object):
 				coord = self.getBoundaryPoint()
 				if(self.createHighway(coord) == True):
 					break
+
+			print("\t", coord.x, coord.y)
 
 
 	# Generate a random Point along the boundary
@@ -76,7 +83,7 @@ class Grid(object):
 					points.append(Point(index, coord.y))
 		# GO UP
 		elif coord.x == rows:
-			for index in reversed(range(rows-hLength, coord.x+1)):
+			for index in reversed(range(rows-hLength+1, self.ROWS)):
 				if self.cells[index][coord.y].isHighway == False:
 					points.append(Point(index, coord.y))
 		# GO RIGHT
@@ -86,7 +93,7 @@ class Grid(object):
 					points.append(Point(coord.x, index))
 		# GO LEFT
 		elif coord.y == columns:
-			for index in reversed(range(columns-hLength, coord.y+1)):
+			for index in reversed(range(columns-hLength+1, self.COLUMNS)):
 				if self.cells[coord.x][index].isHighway == False:
 					points.append(Point(coord.x, index))
 
