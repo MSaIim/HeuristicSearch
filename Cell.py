@@ -17,14 +17,16 @@ class Direction(Enum):
 class Cell(object):
 	def __init__(self):
 		self.isHighway = False
+		self.isStart = False
+		self.isGoal = False
 		self.type = Type.REGULAR
 
 # Point class to hold coordinates
 class Point(object):
 	def __init__(self, x, y, direction = Direction.NONE):
-		self.x = x
-		self.y = y
+		self.x = int(x)
+		self.y = int(y)
 		self.direction = direction
 
 	def __eq__(self, other):
-		return self.x == other.x and self.y == other.y
+		return int(self.x) == int(other.x) and int(self.y) == int(other.y)

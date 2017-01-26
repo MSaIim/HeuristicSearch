@@ -6,7 +6,10 @@ from Cell import Type
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREY = (192, 192, 192)
-GREEN = (69, 186, 139)
+BLUE = (66, 134, 244)
+GREEN = (129, 226, 140)
+PINK = (183, 62, 137)
+
 
 # Width and Height of a Cell along with the margin between them
 WIDTH = 4
@@ -19,7 +22,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Initialize pygame
 pygame.init()
-WINDOW_SIZE = [761, 601]
+WINDOW_SIZE = [801, 601]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Heuristic Search")
 pygame.display.set_icon(pygame.image.load('images/icon.png'))
@@ -56,7 +59,14 @@ while not done:
 			if grid.cells[row][column].type == Type.HARD:
 				color = GREY
 			if grid.cells[row][column].isHighway == True:
+				color = BLUE
+			if grid.cells[row][column].type == Type.BLOCKED:
+				color = BLACK
+			if grid.cells[row][column].isStart == True:
 				color = GREEN
+			if grid.cells[row][column].isGoal == True:
+				color = PINK
+
 			pygame.draw.rect(screen, color, [(MARGIN + WIDTH) * column + MARGIN, (MARGIN + HEIGHT) * row + MARGIN, WIDTH, HEIGHT])
 
 	# Limit to 60 frames per second

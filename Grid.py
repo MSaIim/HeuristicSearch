@@ -1,3 +1,4 @@
+import math
 from random import randrange, uniform
 from Cell import Type
 from Cell import Direction
@@ -18,6 +19,10 @@ class Grid(object):
 	def initialize(self):
 		# Create 2D array of Cells (120 rows by 160 columns)
 		self.cells = [[Cell() for x in range(self.COLUMNS)] for x in range(self.ROWS)]
+
+		# start and goal locations
+		self.startLocation = Point(0,0)
+		self.goalLocation = Point(0,0)
 
 		# Array to hold 8 random coordinates
 		locations = [Point(0, 0) for x in range(self.NUMPOINTS)]
@@ -48,34 +53,71 @@ class Grid(object):
 			coord = self.getBoundaryPoint()
 			if(self.createHighway(coord) == True):
 				i += 1
+				print("\t", coord.x, coord.y)
 
-		print("\t", coord.x, coord.y)
+		# Choose blocked cells
+		blockedCells = 0
+		while(blockedCells < (self.ROWS * self.COLUMNS) * 0.2):
+			x = randrange(0, 120)
+			y = randrange(0, 160)
+
+			if(self.cells[x][y].isHighway == False):
+				self.cells[x][y].type = Type.BLOCKED
+				blockedCells += 1
+
+		# Choose start vertex
+		found = False
+		borderCells = self.getBorderCells()
+		while found == False:
+			index = randrange(0, len(borderCells))
+			point = borderCells[index]
+
+			if(self.cells[point.x][point.y].type != Type.BLOCKED):
+				self.cells[point.x][point.y].isStart = True
+				self.startLocation = point
+				found = True
+
+		# Choose goal vertex
+		found = False
+		while found == False:
+			index = randrange(0, len(borderCells))
+			point = borderCells[index]
+
+			if(self.cells[point.x][point.y].type != Type.BLOCKED and self.calcDistance(point) > 100):
+				self.cells[point.x][point.y].isGoal = True
+				self.goalLocation = point
+				found = True
 
 
 	# Create highway by going 20 cells in a direction
-	def createHighway(self, coord):
+	def createHighway(self, cell):
 		points = []
 		done = False
+		startCoord = cell
 		
 		# Initial Placement
-		if coord.x == self.ROWS - 1:
-			points = self.setHighwayCells(coord, Direction.UP)
-			coord.direction = Direction.UP
-		elif coord.x == 0:
-			points = self.setHighwayCells(coord, Direction.DOWN)
-			coord.direction = Direction.DOWN
-		elif coord.y == self.COLUMNS - 1:
-			points = self.setHighwayCells(coord, Direction.LEFT)
-			coord.direction = Direction.LEFT
-		elif coord.y == 0:
-			points = self.setHighwayCells(coord, Direction.RIGHT)
-			coord.direction = Direction.RIGHT
+		if startCoord.x == self.ROWS - 1:
+			startCoord.x += 1
+			startCoord.direction = Direction.UP
+			points = self.setHighwayCells(startCoord, Direction.UP)
+		elif startCoord.x == 0:
+			startCoord.x -= 1
+			startCoord.direction = Direction.DOWN
+			points = self.setHighwayCells(startCoord, Direction.DOWN)
+		elif startCoord.y == self.COLUMNS - 1:
+			startCoord.y += 1
+			startCoord.direction = Direction.LEFT
+			points = self.setHighwayCells(startCoord, Direction.LEFT)
+		elif startCoord.y == 0:
+			startCoord.y -= 1
+			startCoord.direction = Direction.RIGHT
+			points = self.setHighwayCells(startCoord, Direction.RIGHT)
 
 		#done = True
 		if len(points) == 20:
 			# Cotinue highway
-			points = self.setHighwayDirection(coord, points)
-			if len(points) >= 100 and self.isBoundaryPoint(points[-1]):
+			points = self.setHighwayDirection(startCoord, points)
+			if len(points) >= 100 and self.isBoundaryPoint(points[len(points)-1]):
 				done = True
 
 			# Highway complete
@@ -89,43 +131,38 @@ class Grid(object):
 
 
 	# Select a direction for the highway to move to
-	def setHighwayDirection(self, coord, points):
+	def setHighwayDirection(self, cell, points):
 		highwayLeg = []
 		tries = 0
+		done = False
 
-		while tries < 4:
+		while tries < 4 and done == False:
 			probability = uniform(0, 1)
 
+			# Continue LEFT or DOWN
+			if probability < 0.19:
+				if cell.direction == Direction.UP or cell.direction == Direction.DOWN:
+					highwayLeg = self.setHighwayCells(cell, Direction.LEFT)
+				elif cell.direction == Direction.LEFT or cell.direction == Direction.RIGHT:
+					highwayLeg = self.setHighwayCells(cell, Direction.DOWN)
+			# Continue RIGHT or UP
+			elif probability < 0.39:
+				if cell.direction == Direction.UP or cell.direction == Direction.DOWN:
+					highwayLeg = self.setHighwayCells(cell, Direction.RIGHT)
+				elif cell.direction == Direction.LEFT or cell.direction == Direction.RIGHT:
+					highwayLeg = self.setHighwayCells(cell, Direction.UP)
 			# Continue in same direction
-			if probability < 0.59:
-				if coord.direction == Direction.UP:
-					highwayLeg = self.setHighwayCells(coord, Direction.UP)
-				elif coord.direction == Direction.DOWN:
-					highwayLeg = self.setHighwayCells(coord, Direction.DOWN)
-				elif coord.direction == Direction.LEFT:
-					highwayLeg = self.setHighwayCells(coord, Direction.LEFT)
-				elif coord.direction == Direction.RIGHT:
-					highwayLeg = self.setHighwayCells(coord, Direction.RIGHT)
-			# Continue in perpendicular (DOWN or LEFT)
-			elif probability < 0.79:
-				if coord.direction == Direction.UP or coord.direction == Direction.DOWN:
-					highwayLeg = self.setHighwayCells(coord, Direction.LEFT)
-				elif coord.direction == Direction.LEFT or coord.direction == Direction.RIGHT:
-					highwayLeg = self.setHighwayCells(coord, Direction.DOWN)
-			# Continue in perpendicular (UP or RIGHT)
-			elif probability < 1:
-				if coord.direction == Direction.UP or coord.direction == Direction.DOWN:
-					highwayLeg = self.setHighwayCells(coord, Direction.RIGHT)
-				elif coord.direction == Direction.LEFT or coord.direction == Direction.RIGHT:
-					highwayLeg = self.setHighwayCells(coord, Direction.UP)
+			else:
+				highwayLeg = self.setHighwayCells(cell, cell.direction)
 
-			if len(points) + len(highwayLeg) >= 100 and self.isBoundaryPoint(highwayLeg[-1]):
+			# Conditions to keep running or stop
+			if len(points) + len(highwayLeg) >= 100 and len(highwayLeg) > 0 and self.isBoundaryPoint(highwayLeg[-1]):
 				points.extend(highwayLeg)
-				break;
+				done = True;
 			elif len(highwayLeg) < 20 or self.isBoundaryPoint(highwayLeg[-1]):
 				tries += 1
 			else:
-				coord = highwayLeg[len(highwayLeg)-1]
+				cell = highwayLeg[-1]
 				points.extend(highwayLeg)
 		
 		return points
@@ -136,15 +173,17 @@ class Grid(object):
 		highwayLength = 20
 		highway = []
 		index = 0
-
-		while index < 20:
+		done = False
+		
+		while index < 20 and done == False:
 			point = self.getNextCell(cell, direction)
+
 			if(self.isInBounds(point) and self.cells[point.x][point.y].isHighway == False):
 				highway.append(point)
 				cell = highway[-1]
 				index += 1
 			else:
-				break
+				done = True
 
 		return highway
 
@@ -162,19 +201,23 @@ class Grid(object):
 
 	# Generate a random Point along the boundary
 	def getBoundaryPoint(self):
-		dimensions = [self.ROWS, self.COLUMNS]
-		edges = [0 for x in range(2)]
+		found = False
 
-		# Get two random points along the boundary
-		edges[0] = randrange(0, 2) * (self.ROWS-1)
-		edges[1] = randrange(0, 2) * (self.COLUMNS-1)
+		while found == False:
+			dimensions = [self.ROWS, self.COLUMNS]
+			edges = [0 for x in range(2)]
 
-		# Change one index
-		index = randrange(0, 2)
-		edges[index] = randrange(0, dimensions[index])
+			# Get two random points along the boundary
+			edges[0] = int(randrange(0, 2) * (self.ROWS-1))
+			edges[1] = int(randrange(0, 2) * (self.COLUMNS-1))
 
-		# Return random Point
-		return Point(edges[0], edges[1])
+			# Change one index
+			index = randrange(0, 2)
+			edges[index] = randrange(0, dimensions[index])
+
+			if((edges[0] != 0 and edges[1] != 0) or (edges[0] != 0 and edges[1] != 159) or (edges[0] != 119 and edges[1] != 0) or (edges[0] != 119 and edges[1] != 159)):
+				found = True
+				return Point(edges[0], edges[1])
 
 
 	# Check if point is a boundary coordinate
@@ -186,3 +229,28 @@ class Grid(object):
 	def isInBounds(self, point):
 		return point.x > -1 and point.x < 120 and point.y > -1 and point.y < 160
 
+	# Distance formula
+	def calcDistance(self, point):
+		return math.sqrt(((point.x - self.startLocation.x)**2) + ((point.y - self.startLocation.x)**2))
+
+	# Get border points
+	def getBorderCells(self):
+		borderCells = []
+
+		for i in range(0, 20):
+			for j in range(0, 160):
+				borderCells.append(Point(i, j))
+
+		for i in range(99, 120):
+			for j in range(0, 160):
+				borderCells.append(Point(i, j))
+
+		for i in range(0, 20):
+			for j in range(0, 120):
+				borderCells.append(Point(j, i))
+
+		for i in range(139, 160):
+			for j in range(0, 120):
+				borderCells.append(Point(j, i))
+
+		return borderCells;
