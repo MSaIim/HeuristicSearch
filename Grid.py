@@ -4,6 +4,7 @@ from Cell import Type
 from Cell import Direction
 from Cell import Cell
 from Cell import Point
+from copy import deepcopy
 
 class Grid(object):
 	ROWS = 120
@@ -91,115 +92,105 @@ class Grid(object):
 
 	# Create highway by going 20 cells in a direction
 	def createHighway(self, cell):
-		points = []
+		totalHighway = []
 		done = False
-		startCoord = cell
+		startCoord = deepcopy(cell)
 		
 		# Initial Placement
 		if startCoord.x == self.ROWS - 1:
-			startCoord.x += 1
-			startCoord.direction = Direction.UP
-			points = self.setHighwayCells(startCoord, Direction.UP)
+			totalHighway = self.goHighwayDirection(totalHighway, startCoord, Direction.UP)
 		elif startCoord.x == 0:
-			startCoord.x -= 1
-			startCoord.direction = Direction.DOWN
-			points = self.setHighwayCells(startCoord, Direction.DOWN)
+			totalHighway = self.goHighwayDirection(totalHighway, startCoord, Direction.DOWN)
 		elif startCoord.y == self.COLUMNS - 1:
-			startCoord.y += 1
-			startCoord.direction = Direction.LEFT
-			points = self.setHighwayCells(startCoord, Direction.LEFT)
+			totalHighway = self.goHighwayDirection(totalHighway, startCoord, Direction.LEFT)
 		elif startCoord.y == 0:
-			startCoord.y -= 1
-			startCoord.direction = Direction.RIGHT
-			points = self.setHighwayCells(startCoord, Direction.RIGHT)
+			totalHighway = self.goHighwayDirection(totalHighway, startCoord, Direction.RIGHT)
 
-		#done = True
-		if len(points) == 20:
-			# Cotinue highway
-			points = self.setHighwayDirection(startCoord, points)
-			if len(points) >= 100 and self.isBoundaryPoint(points[len(points)-1]):
-				done = True
+		# Check if done
+		if len(totalHighway) >= 100 and self.isBoundaryPoint(totalHighway[len(totalHighway)-1]):
+			done = True
 
-			# Highway complete
-			if done == True:
-				for point in points:
-					self.cells[point.x][point.y].isHighway = True
-				return True
+		# Highway complete
+		if done == True:
+			for point in totalHighway:
+				self.cells[point.x][point.y].isHighway = True
+			return True
 
 		# Something went wrong
 		return False
 
 
 	# Select a direction for the highway to move to
-	def setHighwayDirection(self, cell, points):
-		highwayLeg = []
+	def goHighwayDirection(self, totalHighway, coord, direction):
+		highwayLine = []
 		tries = 0
 		done = False
+		point = deepcopy(coord)
 
-		while tries < 4 and done == False:
+		highwayLine = self.setHighwayCells(totalHighway, point, direction)
+		while len(highwayLine) == 20:
+			totalHighway.extend(highwayLine)
+			point = highwayLine[len(highwayLine)-1]
 			probability = uniform(0, 1)
 
 			# Continue LEFT or DOWN
 			if probability < 0.19:
-				if cell.direction == Direction.UP or cell.direction == Direction.DOWN:
-					highwayLeg = self.setHighwayCells(cell, Direction.LEFT)
-				elif cell.direction == Direction.LEFT or cell.direction == Direction.RIGHT:
-					highwayLeg = self.setHighwayCells(cell, Direction.DOWN)
+				if point.direction == Direction.UP or point.direction == Direction.DOWN:
+					highwayLine = self.setHighwayCells(totalHighway, point, Direction.LEFT)
+				elif point.direction == Direction.LEFT or point.direction == Direction.RIGHT:
+					highwayLine = self.setHighwayCells(totalHighway, point, Direction.DOWN)
 			# Continue RIGHT or UP
 			elif probability < 0.39:
-				if cell.direction == Direction.UP or cell.direction == Direction.DOWN:
-					highwayLeg = self.setHighwayCells(cell, Direction.RIGHT)
-				elif cell.direction == Direction.LEFT or cell.direction == Direction.RIGHT:
-					highwayLeg = self.setHighwayCells(cell, Direction.UP)
+				if point.direction == Direction.UP or point.direction == Direction.DOWN:
+					highwayLine = self.setHighwayCells(totalHighway, point, Direction.RIGHT)
+				elif point.direction == Direction.LEFT or point.direction == Direction.RIGHT:
+					highwayLine = self.setHighwayCells(totalHighway, point, Direction.UP)
 			# Continue in same direction
 			else:
-				highwayLeg = self.setHighwayCells(cell, cell.direction)
+				highwayLine = self.setHighwayCells(totalHighway, point, point.direction)
 
-			# Conditions to keep running or stop
-			if len(points) + len(highwayLeg) >= 100 and len(highwayLeg) > 0 and self.isBoundaryPoint(highwayLeg[-1]):
-				points.extend(highwayLeg)
-				done = True;
-			elif len(highwayLeg) < 20 or self.isBoundaryPoint(highwayLeg[-1]):
-				tries += 1
-			else:
-				cell = highwayLeg[-1]
-				points.extend(highwayLeg)
-		
-		return points
+		totalHighway.extend(highwayLine)
+		return totalHighway
 
 
 	# Set the cells to be flagged as highways
-	def setHighwayCells(self, cell, direction):
+	def setHighwayCells(self, totalHighway, coord, direction):
 		highwayLength = 20
-		highway = []
+		highwayLine = []
 		index = 0
 		done = False
+		point = deepcopy(coord)
 		
-		while index < 20 and done == False:
-			point = self.getNextCell(cell, direction)
+		if(len(totalHighway) == 0):
+			highwayLine.append(point)
+			index += 1
 
-			# *********************************************************************************************************************
-			# -*********************************** MAKE SURE POINT ISN'T ALREADY IN THE HIGHWAY LIST *****************************-
-			# *********************************************************************************************************************
-			if(self.isInBounds(point) and self.cells[point.x][point.y].isHighway == False):
-				highway.append(point)
-				cell = highway[-1]
-				index += 1
+		while index < 20 and done == False:
+			newPoint = self.getNextCell(point, direction)
+
+			if(self.isInBounds(newPoint) and self.cells[newPoint.x][newPoint.y].isHighway == False and newPoint not in totalHighway):
+				highwayLine.append(newPoint)
+				point = highwayLine[len(highwayLine)-1]
+
+				if(self.isBoundaryPoint(point) == True):
+					done = True
+				else:
+					index += 1
 			else:
 				done = True
 
-		return highway
+		return highwayLine
 
 
-	def getNextCell(self, cell, direction):
+	def getNextCell(self, point, direction):
 		if(direction == Direction.UP):
-			return Point(cell.x-1, cell.y, Direction.UP)
+			return Point(point.x-1, point.y, Direction.UP)
 		elif(direction == Direction.DOWN):
-			return Point(cell.x+1, cell.y, Direction.DOWN)
+			return Point(point.x+1, point.y, Direction.DOWN)
 		elif(direction == Direction.LEFT):
-			return Point(cell.x, cell.y-1, Direction.LEFT)
+			return Point(point.x, point.y-1, Direction.LEFT)
 		elif(direction == Direction.RIGHT):
-			return Point(cell.x, cell.y+1, Direction.RIGHT)
+			return Point(point.x, point.y+1, Direction.RIGHT)
 
 
 	# Generate a random Point along the boundary
