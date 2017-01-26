@@ -9,8 +9,8 @@ GREY = (192, 192, 192)
 GREEN = (69, 186, 139)
 
 # Width and Height of a Cell along with the margin between them
-WIDTH = 5
-HEIGHT = 5
+WIDTH = 4
+HEIGHT = 4
 MARGIN = 1
 
 # Initialize the Grid and center the screen
@@ -19,7 +19,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Initialize pygame
 pygame.init()
-WINDOW_SIZE = [961, 721]
+WINDOW_SIZE = [761, 601]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Heuristic Search")
 pygame.display.set_icon(pygame.image.load('images/icon.png'))
