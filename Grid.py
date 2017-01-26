@@ -178,6 +178,9 @@ class Grid(object):
 		while index < 20 and done == False:
 			point = self.getNextCell(cell, direction)
 
+			# *********************************************************************************************************************
+			# -*********************************** MAKE SURE POINT ISN'T ALREADY IN THE HIGHWAY LIST *****************************-
+			# *********************************************************************************************************************
 			if(self.isInBounds(point) and self.cells[point.x][point.y].isHighway == False):
 				highway.append(point)
 				cell = highway[-1]
