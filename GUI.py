@@ -1,4 +1,5 @@
 import pygame, os
+from Buttons import Button
 from Grid import Grid
 from Cell import Type
 
@@ -18,11 +19,12 @@ MARGIN = 1
 
 # Initialize the Grid and center the screen
 grid = Grid()
+button = Button()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Initialize pygame
 pygame.init()
-WINDOW_SIZE = [801, 601]
+WINDOW_SIZE = [801, 701]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Heuristic Search")
 pygame.display.set_icon(pygame.image.load('images/icon.png'))
@@ -51,6 +53,9 @@ while not done:
 
 	# Set the screen background
 	screen.fill(BLACK)
+	#                    surface.  color.      x.   y. length.  height. width
+	button.create_button(screen, (183,62,137), 20, 611, 200,    75,    0,        "Reload", (255,255,255))
+
 
 	# Draw the grid
 	for row in range(120):
@@ -71,9 +76,11 @@ while not done:
 
 	# Limit to 60 frames per second
 	clock.tick(60)
- 
+	
 	# Update the screen
 	pygame.display.flip()
- 
+
+
+
 # Prevent hang if idle
 pygame.quit()
