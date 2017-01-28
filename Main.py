@@ -1,8 +1,8 @@
 import pygame, os
-import Constants
-from Controls import Control
-from Grid import Grid
-from Cell import Type, Cell
+from py import Constants
+from py.Grid import Grid
+from py.Controls import Control
+from py.Cell import Type
 
 class GUI(object):
 	def __init__(self):
@@ -11,13 +11,13 @@ class GUI(object):
 		self.saveButton = Control()					# Reload button
 		self.loadButton = Control()					# Reload button
 		self.optionsText = Control()				# Options text
-		os.environ['SDL_VIDEO_CENTERED'] = '1'	# Center the window
+		os.environ['SDL_VIDEO_CENTERED'] = '1'		# Center the window
 
 		# Set the screen size, title, and icon
 		self.grid_image = pygame.Surface((160.2 * (Constants.WIDTH + Constants.MARGIN), 120.2 * (Constants.HEIGHT + Constants.MARGIN)))
 		self.screen = pygame.display.set_mode(Constants.WINDOW_SIZE)
 		pygame.display.set_caption("Heuristic Search")
-		pygame.display.set_icon(pygame.image.load('images/icon.png'))
+		pygame.display.set_icon(pygame.image.load('res/icon.png'))
 
 		# Initialize pygame
 		pygame.init()
@@ -40,20 +40,20 @@ class GUI(object):
 
 					# RELOAD BUTTON CLICKED
 					if self.reloadButton.pressed(pygame.mouse.get_pos()):
-						self.grid.initialize()
+						self.grid = Grid()
 					# LOAD BUTTON CLICKED
 					if self.loadButton.pressed(pygame.mouse.get_pos()):
-						print("\nLoad Clicked")
+						print("Load Clicked")
 					# SAVE BUTTON CLICKED
 					if self.saveButton.pressed(pygame.mouse.get_pos()):
-						print("\Save Clicked")
+						print("Save Clicked")
 					
 					# Convert x/y screen coordinates to grid coordinates				 
 					column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate
 					row = pos[1] // (Constants.HEIGHT + Constants.MARGIN) - 4	 # Change the y screen coordinate to grid coordinate
 
-					# Print out the coordinates
-					if(column > -1 and column < 160 and row > -1 and row < 120):
+					# Print out the coordinates if clicked inside grid
+					if(row > -1 and row < Constants.ROWS and column > -1 and column < Constants.COLUMNS):
 						print("Grid coordinates: (", row, ",", column, ")")
 
 			# Draw the grid
@@ -86,8 +86,8 @@ class GUI(object):
 		# Draw the grid
 		full_width, full_height = Constants.MARGIN + Constants.WIDTH, Constants.MARGIN + Constants.HEIGHT
 
-		for row in range(120):
-			for column in range(160):
+		for row in range(Constants.ROWS):
+			for column in range(Constants.COLUMNS):
 				cell = self.grid.cells[row][column]
 				color = Constants.WHITE
 
@@ -102,9 +102,9 @@ class GUI(object):
 					color = Constants.LIGHT_BLUE		# Highway and regular
 				
 				if cell.isStart == True:			
-					color = Constants.GREEN				# Start vertex
+					color = Constants.RED				# Start vertex
 				if cell.isGoal == True:			
-					color = Constants.PINK				# Goal vertex
+					color = Constants.RED				# Goal vertex
 
 				# Draw the cell
 				pygame.draw.rect(self.grid_image, color, [full_width * column + Constants.MARGIN, full_height * row + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT])
