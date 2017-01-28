@@ -29,7 +29,5 @@ class Control(object):
 				if mouse[0] < self.rect.bottomright[0]:
 					if mouse[1] < self.rect.bottomright[1]:
 						return True
-					else: return False
-				else: return False
-			else: return False
-		else: return False
+
+		return False

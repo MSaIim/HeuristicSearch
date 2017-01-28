@@ -1,11 +1,18 @@
 from copy import deepcopy
 from random import randrange, uniform
+import tkinter as tk
+from tkinter import filedialog
+
 from py import Constants
 from py.Cell import Cell, Type, Point
 from py.Highway import Highway
 
 
 class Grid(Highway):
+	# Static variables for saving and opening maps
+	root = tk.Tk()
+	root.withdraw()
+
 	def __init__(self):
 		# 2D array of cells
 		self.cells = [[Cell() for x in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]
@@ -126,3 +133,30 @@ class Grid(Highway):
 				borderCells.append(Point(j, i))
 
 		return borderCells;
+
+
+	# Saves the grid to a .map file
+	def save(self):
+		# Bring up save dialog box
+		file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "maps")
+		
+		# Check if user clicked cancel
+		if file is None:
+			return False
+
+		# Write to file
+		with open(file, 'w') as f:
+			# Start and Goal locations on first two lines
+			f.write("".join([str(self.startLocation), '\n', str(self.goalLocation), '\n']))
+
+			# The eight hard-to-traverse center points
+			f.write('\n'.join(str(point) for point in self.locations))
+			f.write('\n')
+
+			# The actual grid (160 characters per line)
+			for row in range(Constants.ROWS):
+				for col in range(Constants.COLUMNS):
+					f.write(''.join(str(self.cells[row][col])))
+				f.write('\n')
+
+			f.close()

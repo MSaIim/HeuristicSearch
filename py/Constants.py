@@ -6,6 +6,7 @@ RED = (255, 0, 0)
 PINK = (183, 62, 137)
 DARK_BLUE = (0, 106, 255)
 LIGHT_BLUE = (66, 185, 244)
+GREEN = (50, 188, 131)
 
 # Constans for the squares
 WIDTH = 4

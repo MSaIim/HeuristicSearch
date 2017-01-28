@@ -1,5 +1,6 @@
 import math
 from enum import Enum
+from py import Constants
 
 # Enum class to know the Cell's type
 class Type(Enum):
@@ -24,6 +25,19 @@ class Cell(object):
 		self.isGoal = False
 		self.type = Type.REGULAR
 
+	# Python's toString() method
+	def __str__(self):
+		if self.type == Type.BLOCKED:
+			return "0"
+		elif self.type == Type.REGULAR and self.isHighway:
+			return "a"
+		elif self.type == Type.HARD and self.isHighway:
+			return "b"
+		elif self.type == Type.REGULAR:
+			return "1"
+		elif self.type == Type.HARD:
+			return "2"
+
 
 # Point class to hold coordinates
 class Point(object):
@@ -34,11 +48,11 @@ class Point(object):
 
 	# Check if point is a boundary coordinate
 	def isBoundaryPoint(self):
-		return self.x == 0 or self.x == 119 or self.y == 0 or self.y == 159
+		return self.x == 0 or self.x == Constants.ROWS-1 or self.y == 0 or self.y == Constants.COLUMNS-1
 
 	# Check bounds
 	def isInBounds(self):
-		return self.x > -1 and self.x < 120 and self.y > -1 and self.y < 160
+		return self.x > -1 and self.x < Constants.ROWS and self.y > -1 and self.y < Constants.COLUMNS
 
 	# Distance formula
 	@staticmethod
@@ -48,3 +62,7 @@ class Point(object):
 	# Equals method for use with lists (in, not in)
 	def __eq__(self, other):
 		return int(self.x) == int(other.x) and int(self.y) == int(other.y)
+
+	# Python's toString() method
+	def __str__(self):
+		return "".join(["(", str(self.x), ",", str(self.y), ")"])

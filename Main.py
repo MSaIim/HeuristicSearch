@@ -4,6 +4,7 @@ from py.Grid import Grid
 from py.Controls import Control
 from py.Cell import Type
 
+
 class GUI(object):
 	def __init__(self):
 		self.grid = Grid()							# Setup the grid
@@ -39,14 +40,16 @@ class GUI(object):
 					pos = pygame.mouse.get_pos()	
 
 					# RELOAD BUTTON CLICKED
-					if self.reloadButton.pressed(pygame.mouse.get_pos()):
+					if self.reloadButton.pressed(pos):
 						self.grid = Grid()
 					# LOAD BUTTON CLICKED
-					if self.loadButton.pressed(pygame.mouse.get_pos()):
-						print("Load Clicked")
+					if self.loadButton.pressed(pos):
+						print("Load clicked")
+						#file_path = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = "maps")
+						#print(file_path)
 					# SAVE BUTTON CLICKED
-					if self.saveButton.pressed(pygame.mouse.get_pos()):
-						print("Save Clicked")
+					if self.saveButton.pressed(pos):
+						self.grid.save()
 					
 					# Convert x/y screen coordinates to grid coordinates				 
 					column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate
