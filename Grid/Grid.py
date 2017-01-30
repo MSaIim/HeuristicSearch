@@ -3,9 +3,9 @@ from random import randrange, uniform
 import tkinter as tk
 from tkinter import filedialog
 
-from py import Constants
-from py.Cell import Cell, Type, Point
-from py.Highway import Highway
+from Utilities import Constants
+from Grid.Cell import Cell, Type, Point
+from Grid.Highway import Highway
 
 
 class Grid(Highway):
@@ -15,7 +15,7 @@ class Grid(Highway):
 
 	def __init__(self):
 		# 2D array of cells
-		self.cells = [[Cell() for x in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]
+		self.cells = [[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]
 
 		# Save the start, goal, and the eight hard to traverse centers
 		self.startLocation = Point(0,0)
@@ -102,7 +102,7 @@ class Grid(Highway):
 			index = randrange(0, len(borderCells))
 			point = borderCells[index]
 
-			if(self.cells[point.x][point.y].type != Type.BLOCKED and Point.calcDistance(point, self.startLocation) > 100):
+			if(self.cells[point.x][point.y].type != Type.BLOCKED and point.distanceFrom(self.startLocation) > 100):
 				self.cells[point.x][point.y].isGoal = True
 				self.goalLocation = point
 				found = True
@@ -138,7 +138,7 @@ class Grid(Highway):
 	# Saves the grid to a .map file
 	def save(self):
 		# Bring up save dialog box
-		file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "maps")
+		file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "Resources/maps")
 		
 		# Check if user clicked cancel
 		if file is None:

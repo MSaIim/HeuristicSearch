@@ -1,7 +1,7 @@
 from copy import deepcopy
 from random import randrange, uniform
-from py import Constants
-from py.Cell import Cell, Direction, Point
+from Utilities import Constants
+from Grid.Cell import Cell, Direction, Point
 
 class Highway(object):
 	def createHighway(self, gridCells):

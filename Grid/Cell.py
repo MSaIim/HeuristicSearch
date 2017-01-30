@@ -1,6 +1,7 @@
 import math
+from functools import total_ordering
 from enum import Enum
-from py import Constants
+from Utilities import Constants
 
 # Enum class to know the Cell's type
 class Type(Enum):
@@ -19,11 +20,24 @@ class Direction(Enum):
 
 # The individual Cell
 class Cell(object):
-	def __init__(self):
+	def __init__(self, x, y):
 		self.isHighway = False
 		self.isStart = False
 		self.isGoal = False
 		self.type = Type.REGULAR
+
+		# For algorithms
+		self.X = int(x)
+		self.Y = int(y)
+		self.G = float("inf")
+		self.parent = None
+
+	def __lt__(self, other):
+		return (self.X, self.Y) < (other.X, other.Y)
+
+	# Equals method for use with lists (in, not in)
+	def __eq__(self, other):
+		return int(self.X) == int(other.X) and int(self.Y) == int(other.Y)
 
 	# Python's toString() method
 	def __str__(self):
@@ -55,9 +69,8 @@ class Point(object):
 		return self.x > -1 and self.x < Constants.ROWS and self.y > -1 and self.y < Constants.COLUMNS
 
 	# Distance formula
-	@staticmethod
-	def calcDistance(pointOne, pointTwo):
-		return math.sqrt(((pointOne.x - pointTwo.x)**2) + ((pointOne.y - pointTwo.x)**2))
+	def distanceFrom(self, startPoint):
+		return math.sqrt(((self.x - startPoint.x)**2) + ((self.y - startPoint.x)**2))
 
 	# Equals method for use with lists (in, not in)
 	def __eq__(self, other):

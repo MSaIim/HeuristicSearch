@@ -1,12 +1,12 @@
 # Constants for different colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GREY = (147, 147, 147)
+GREY = (136, 140, 138)
 RED = (255, 0, 0)
 PINK = (183, 62, 137)
 DARK_BLUE = (0, 106, 255)
 LIGHT_BLUE = (66, 185, 244)
-GREEN = (50, 188, 131)
+GREEN = (39, 186, 137)
 
 # Constans for the squares
 WIDTH = 4
