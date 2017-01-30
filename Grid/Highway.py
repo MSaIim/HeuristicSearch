@@ -14,7 +14,6 @@ class Highway(object):
 			highway = self.getHighway(coord)		# Get a list of points
 			if(len(highway) >= 100):				# Check if highway is good
 				done = True
-				print("\t", coord.x, coord.y)
 
 		# Return good highway
 		return highway
@@ -48,32 +47,31 @@ class Highway(object):
 	# Select a direction for the highway to move to
 	def goHighwayDirection(self, totalHighway, coord, direction):
 		highwayLine = []
-		point = deepcopy(coord)
 
 		# Start the initial highway placement
-		highwayLine = self.setHighwayCells(totalHighway, point, direction)
+		highwayLine = self.setHighwayCells(totalHighway, coord, direction)
 
 		# Keep looping until a full highway is formed
 		while len(highwayLine) == Constants.HIGHWAY_LENGTH:
 			totalHighway.extend(highwayLine)				# Add a highway line to the total list
-			point = highwayLine[len(highwayLine)-1]			# Start the next line at the last point
+			coord = highwayLine[len(highwayLine)-1]			# Start the next line at the last point
 			probability = uniform(0, 1)						# Probability to determine the pathway
 
 			# Continue LEFT or DOWN
 			if probability < 0.19:
-				if point.direction == Direction.UP or point.direction == Direction.DOWN:
-					highwayLine = self.setHighwayCells(totalHighway, point, Direction.LEFT)
-				elif point.direction == Direction.LEFT or point.direction == Direction.RIGHT:
-					highwayLine = self.setHighwayCells(totalHighway, point, Direction.DOWN)
+				if coord.direction == Direction.UP or coord.direction == Direction.DOWN:
+					highwayLine = self.setHighwayCells(totalHighway, coord, Direction.LEFT)
+				elif coord.direction == Direction.LEFT or coord.direction == Direction.RIGHT:
+					highwayLine = self.setHighwayCells(totalHighway, coord, Direction.DOWN)
 			# Continue RIGHT or UP
 			elif probability < 0.39:
-				if point.direction == Direction.UP or point.direction == Direction.DOWN:
-					highwayLine = self.setHighwayCells(totalHighway, point, Direction.RIGHT)
-				elif point.direction == Direction.LEFT or point.direction == Direction.RIGHT:
-					highwayLine = self.setHighwayCells(totalHighway, point, Direction.UP)
+				if coord.direction == Direction.UP or coord.direction == Direction.DOWN:
+					highwayLine = self.setHighwayCells(totalHighway, coord, Direction.RIGHT)
+				elif coord.direction == Direction.LEFT or coord.direction == Direction.RIGHT:
+					highwayLine = self.setHighwayCells(totalHighway, coord, Direction.UP)
 			# Continue in same direction
 			else:
-				highwayLine = self.setHighwayCells(totalHighway, point, point.direction)
+				highwayLine = self.setHighwayCells(totalHighway, coord, coord.direction)
 
 		# Loop is done, add the last highway line
 		totalHighway.extend(highwayLine)
@@ -85,25 +83,24 @@ class Highway(object):
 		highwayLine = []
 		index = 0
 		done = False
-		point = deepcopy(coord)
 		
 		# If this is the first point, add it immediately
 		if(len(totalHighway) == 0):
-			highwayLine.append(point)
+			highwayLine.append(coord)
 			index += 1
 
 		# Loop until a full highway line is formed
 		while index < Constants.HIGHWAY_LENGTH and done == False:
 			# Get the next point
-			newPoint = self.getNextCell(point, direction)
+			newPoint = self.getNextCell(coord, direction)
 
 			# Check if the new point is within bounds, not overlapping another highway, and not already in the total list
 			if(newPoint.isInBounds() and self.cells[newPoint.x][newPoint.y].isHighway == False and newPoint not in totalHighway):
 				highwayLine.append(newPoint)
-				point = highwayLine[len(highwayLine)-1]
+				coord = highwayLine[len(highwayLine)-1]
 
 				# If the point is a boundary point, no need to continue
-				if(point.isBoundaryPoint()):
+				if(coord.isBoundaryPoint()):
 					done = True
 				else:
 					index += 1

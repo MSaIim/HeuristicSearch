@@ -1,4 +1,3 @@
-from copy import deepcopy
 from random import randrange, uniform
 import tkinter as tk
 from tkinter import filedialog
@@ -23,11 +22,9 @@ class Grid(Highway):
 		self.locations = [Point(0,0) for x in range(Constants.NUM_POINTS)]
 
 		# Create the hard to traverse cells
-		print("Center Points:")
 		self.setHardToTraverse();
 
 		# Create the highways
-		print("\nHighway Points:")
 		self.setHighways()
 
 		# Set the blocked, start, and goal cells
@@ -47,9 +44,8 @@ class Grid(Highway):
 		while(index < Constants.NUM_POINTS):
 			temp = Point(randrange(0, Constants.ROWS-1), randrange(0, Constants.COLUMNS-1))
 			if(temp not in self.locations):
-				self.locations[index] = deepcopy(temp)
+				self.locations[index] = temp
 				index += 1
-				print("\t", self.locations[index-1].x, self.locations[index-1].y)
 
 		# 50% probability to make a cell HARD TO TRAVERSE around the coordinates chosen above
 		for location in self.locations:
@@ -93,7 +89,7 @@ class Grid(Highway):
 
 			if(self.cells[point.x][point.y].type != Type.BLOCKED):
 				self.cells[point.x][point.y].isStart = True
-				self.startLocation = deepcopy(point)
+				self.startLocation = point
 				found = True
 
 		# Choose goal vertex

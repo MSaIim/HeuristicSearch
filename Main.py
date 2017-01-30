@@ -12,6 +12,12 @@ class GUI(object):
 	def __init__(self):
 		self.grid = Grid()							# Setup the grid
 
+		self.cellText = Control()
+		self.coordText = Control()
+		self.fText = Control()
+		self.hText = Control()
+		self.gText = Control()
+
 		self.optionsText = Control()				# Options text
 		self.reloadButton = Control()				# Reload button
 		self.saveButton = Control()					# Reload button
@@ -82,7 +88,7 @@ class GUI(object):
 	# All the draw calls for the screen
 	def draw(self):
 		self.screen.fill(Constants.WHITE)
-		self.grid_image.fill(Constants.WHITE)
+		self.grid_image.fill(Constants.GREEN)
 
 		# Draw boxes (surface, color, rectangle[x, y, width, height], width)
 		pygame.draw.rect(self.screen, Constants.BLACK, [18, 18, 805, 605], 1)			# Border around grid
@@ -96,6 +102,7 @@ class GUI(object):
 
 		# Draw text (surface, text, text_color, length, height, x, y)
 		self.optionsText.write_text(self.screen, "Options", Constants.BLACK, 150, 100, 890, 450)
+		self.cellText.write_text(self.screen, "".join(["Cell: (", str(0), ",", str(0), ")"]), Constants.BLACK, 250, 100, 800, 0)
 
 		# Draw the grid
 		full_width, full_height = Constants.MARGIN + Constants.WIDTH, Constants.MARGIN + Constants.HEIGHT
@@ -103,7 +110,7 @@ class GUI(object):
 		for row in range(Constants.ROWS):
 			for column in range(Constants.COLUMNS):
 				cell = self.grid.cells[row][column]
-				color = Constants.WHITE
+				color = Constants.GREEN
 
 				if cell.type == Type.HARD: 		
 					color = Constants.GREY				# Hard to traverse

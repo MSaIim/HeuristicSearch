@@ -1,5 +1,4 @@
 from Algorithms.Heap import *
-from Grid.Cell import *
 
 heap = PriorityQueue()
 
@@ -15,6 +14,8 @@ heap.push(cell3, 4)
 heap.push(cell4, 0)
 heap.push(cell5, 5)
 
-print(heap.pop())		# Returns cell4
-heap.remove(cell2)		# Deletes cell2
-print(heap.pop())		# Would have returned cell2, but now returns cell3
+print("Pop:", heap.pop(), "\nRemove: cell2")		# Returns cell4
+heap.remove(cell2)									# Deletes cell2
+heap.push(cell2, 5)
+print("Pop:", heap.pop())							# Would have returned cell2, but now returns cell3
+
