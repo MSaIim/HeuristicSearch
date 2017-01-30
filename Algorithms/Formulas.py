@@ -28,7 +28,7 @@ class Formulas(object):
 					continue
 
 				if(grid[row][col].type != Type.BLOCKED):
-					cells.append(deepcopy(grid[row][col]))
+					cells.append(grid[row][col])
 
 		return cells
 
@@ -55,4 +55,3 @@ class Formulas(object):
 				cost = 0.375 if s.isHighway and sprime.isHighway else 1.5
 
 		return cost
-

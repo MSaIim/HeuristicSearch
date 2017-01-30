@@ -18,7 +18,6 @@ class GUI(object):
 		self.loadButton = Control()					# Reload button
 		
 		self.astarButton = Control()				# AStar button
-		self.astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
 		os.environ['SDL_VIDEO_CENTERED'] = '1'		# Center the window
 
 		# Set the screen size, title, and icon
@@ -58,7 +57,9 @@ class GUI(object):
 					elif self.saveButton.pressed(pos):
 						self.grid.save()
 					elif self.astarButton.pressed(pos):
-						self.astarAlgo.search()
+						astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
+						astarAlgo.search()
+						astarAlgo.getPath()
 					
 					# Convert x/y screen coordinates to grid coordinates				 
 					column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate

@@ -5,13 +5,13 @@ class PriorityQueue(object):
 		self.heap = []
 
 
-	def push(self, priority, item):
+	def push(self, item, priority):
 		heapq.heappush(self.heap, (priority, item))
 
 
 	def pop(self):
-		item = heapq.heappop(self.heap)[1]
-		return item
+		item = heapq.heappop(self.heap)
+		return item[1]
 
 
 	def contains(self, item):
