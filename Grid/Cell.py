@@ -30,7 +30,8 @@ class Cell(object):
 		self.X = int(x)
 		self.Y = int(y)
 		self.G = float("inf")
-		self.parent = None
+		self.Parent = None
+		self.isPath = False
 
 	def __lt__(self, other):
 		return (self.X, self.Y) < (other.X, other.Y)
@@ -70,7 +71,7 @@ class Point(object):
 
 	# Distance formula
 	def distanceFrom(self, startPoint):
-		return math.sqrt(((self.x - startPoint.x)**2) + ((self.y - startPoint.x)**2))
+		return math.sqrt(((self.x - startPoint.x)**2) + ((self.y - startPoint.y)**2))
 
 	# Equals method for use with lists (in, not in)
 	def __eq__(self, other):

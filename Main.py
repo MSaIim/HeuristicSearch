@@ -1,5 +1,4 @@
 import pygame, os
-
 from Utilities import Constants
 from Utilities.Controls import Control
 from Grid.Grid import Grid
@@ -12,17 +11,11 @@ class GUI(object):
 	def __init__(self):
 		self.grid = Grid()							# Setup the grid
 
-		self.cellText = Control()
-		self.coordText = Control()
-		self.fText = Control()
-		self.hText = Control()
-		self.gText = Control()
-
 		self.optionsText = Control()				# Options text
 		self.reloadButton = Control()				# Reload button
 		self.saveButton = Control()					# Reload button
 		self.loadButton = Control()					# Reload button
-		
+		self.pathFound = False
 		self.astarButton = Control()				# AStar button
 		os.environ['SDL_VIDEO_CENTERED'] = '1'		# Center the window
 
@@ -44,6 +37,10 @@ class GUI(object):
 		done = False
 
 		while not done:
+			self.grid_image.fill(Constants.GREEN)
+			self.screen.fill(Constants.WHITE)
+
+
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					done = True
@@ -56,16 +53,13 @@ class GUI(object):
 						self.grid = Grid()
 					# LOAD BUTTON CLICKED
 					elif self.loadButton.pressed(pos):
-						print("Load clicked")
-						#file_path = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = "maps")
-						#print(file_path)
+						self.grid.load()
 					# SAVE BUTTON CLICKED
 					elif self.saveButton.pressed(pos):
 						self.grid.save()
 					elif self.astarButton.pressed(pos):
 						astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
-						astarAlgo.search()
-						astarAlgo.getPath()
+						self.grid.setPath(astarAlgo.search())
 					
 					# Convert x/y screen coordinates to grid coordinates				 
 					column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate
@@ -74,6 +68,7 @@ class GUI(object):
 					# Print out the coordinates if clicked inside grid
 					if(row > -1 and row < Constants.ROWS and column > -1 and column < Constants.COLUMNS):
 						print("Grid coordinates: (", row, ",", column, ")")
+					
 
 			# Draw the grid
 			self.draw()
@@ -87,9 +82,6 @@ class GUI(object):
 
 	# All the draw calls for the screen
 	def draw(self):
-		self.screen.fill(Constants.WHITE)
-		self.grid_image.fill(Constants.GREEN)
-
 		# Draw boxes (surface, color, rectangle[x, y, width, height], width)
 		pygame.draw.rect(self.screen, Constants.BLACK, [18, 18, 805, 605], 1)			# Border around grid
 		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [850, 18, 230, 400], 1)		# Box on right
@@ -102,14 +94,13 @@ class GUI(object):
 
 		# Draw text (surface, text, text_color, length, height, x, y)
 		self.optionsText.write_text(self.screen, "Options", Constants.BLACK, 150, 100, 890, 450)
-		self.cellText.write_text(self.screen, "".join(["Cell: (", str(0), ",", str(0), ")"]), Constants.BLACK, 250, 100, 800, 0)
 
 		# Draw the grid
 		full_width, full_height = Constants.MARGIN + Constants.WIDTH, Constants.MARGIN + Constants.HEIGHT
 
 		for row in range(Constants.ROWS):
 			for column in range(Constants.COLUMNS):
-				cell = self.grid.cells[row][column]
+				cell = self.grid.cells[row, column]
 				color = Constants.GREEN
 
 				if cell.type == Type.HARD: 		
@@ -123,9 +114,14 @@ class GUI(object):
 					color = Constants.LIGHT_BLUE		# Highway and regular
 				
 				if cell.isStart == True:			
-					color = Constants.RED				# Start vertex
+					color = Constants.WHITE				# Start vertex
 				if cell.isGoal == True:			
 					color = Constants.RED				# Goal vertex
+
+				if cell.isPath == True:
+					color = Constants.YELLOW
+					if cell.type == Type.HARD:
+						color = Constants.DARK_YELLOW
 
 				# Draw the cell
 				pygame.draw.rect(self.grid_image, color, [full_width * column + Constants.MARGIN, full_height * row + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT])

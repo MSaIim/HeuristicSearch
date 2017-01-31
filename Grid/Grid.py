@@ -1,7 +1,7 @@
-from random import randrange, uniform
+import numpy as np
 import tkinter as tk
 from tkinter import filedialog
-
+from random import randrange, uniform
 from Utilities import Constants
 from Grid.Cell import Cell, Type, Point
 from Grid.Highway import Highway
@@ -14,27 +14,18 @@ class Grid(Highway):
 
 	def __init__(self):
 		# 2D array of cells
-		self.cells = [[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]
+		self.cells = np.asmatrix([[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
 		# Save the start, goal, and the eight hard to traverse centers
 		self.startLocation = Point(0,0)
 		self.goalLocation = Point(0,0)
-		self.locations = [Point(0,0) for x in range(Constants.NUM_POINTS)]
+		self.locations = np.array([Point(0,0) for x in range(Constants.NUM_POINTS)])
 
-		# Create the hard to traverse cells
+		# Create the different types of cells
 		self.setHardToTraverse();
-
-		# Create the highways
 		self.setHighways()
-
-		# Set the blocked, start, and goal cells
 		self.setBlocked()
-
-		print("\nStart and Goal Points:")
 		self.setStartAndGoal()
-
-		# Print new line
-		print("")
 
 
 	# Choose random centers and mark hard to traverse cells around a 31x31 area
@@ -53,7 +44,7 @@ class Grid(Highway):
 				for col in range(location.y - 15, location.y + 15):
 					if(row > -1 and row < Constants.ROWS and col > -1 and col < Constants.COLUMNS):
 						if(uniform(0, 1) > 0.49):
-							self.cells[row][col].type = Type.HARD
+							self.cells[row, col].type = Type.HARD
 
 
 	# Create the highways
@@ -61,7 +52,7 @@ class Grid(Highway):
 		for index in range(Constants.NUM_HIGHWAYS):
 			highway = self.createHighway(self.cells)
 			for point in highway:
-				self.cells[point.x][point.y].isHighway = True
+				self.cells[point.x, point.y].isHighway = True
 
 
 	# Choose 20% of the cells to be blocked
@@ -72,8 +63,8 @@ class Grid(Highway):
 			x = randrange(0, Constants.ROWS)
 			y = randrange(0, Constants.COLUMNS)
 
-			if(self.cells[x][y].isHighway == False):
-				self.cells[x][y].type = Type.BLOCKED
+			if(self.cells[x, y].isHighway == False):
+				self.cells[x, y].type = Type.BLOCKED
 				blockedCells += 1
 
 
@@ -87,8 +78,8 @@ class Grid(Highway):
 			index = randrange(0, len(borderCells))
 			point = borderCells[index]
 
-			if(self.cells[point.x][point.y].type != Type.BLOCKED):
-				self.cells[point.x][point.y].isStart = True
+			if(self.cells[point.x, point.y].type != Type.BLOCKED):
+				self.cells[point.x, point.y].isStart = True
 				self.startLocation = point
 				found = True
 
@@ -98,37 +89,44 @@ class Grid(Highway):
 			index = randrange(0, len(borderCells))
 			point = borderCells[index]
 
-			if(self.cells[point.x][point.y].type != Type.BLOCKED and point.distanceFrom(self.startLocation) > 100):
-				self.cells[point.x][point.y].isGoal = True
+			if(self.cells[point.x, point.y].type != Type.BLOCKED and point.distanceFrom(self.startLocation) > 100):
+				self.cells[point.x, point.y].isGoal = True
 				self.goalLocation = point
 				found = True
-
-		# Print the points out
-		print("\t", self.startLocation.x, self.startLocation.y)
-		print("\t", self.goalLocation.x, self.goalLocation.y)
 
 
 	# Get border points
 	def getBorderCells(self):
 		borderCells = []
+		append = borderCells.append
 
 		for i in range(0, 20):							# Top 20 rows
 			for j in range(0, Constants.COLUMNS):
-				borderCells.append(Point(i, j))
+				append(Point(i, j))
 
 		for i in range(99, Constants.ROWS):				# Bottom 20 rows
 			for j in range(0, Constants.COLUMNS):
-				borderCells.append(Point(i, j))
+				append(Point(i, j))
 
 		for i in range(0, 20):							# Left-Most 20 columns
 			for j in range(0, Constants.ROWS):
-				borderCells.append(Point(j, i))
+				append(Point(j, i))
 
 		for i in range(139, Constants.COLUMNS):			# Right-Most 20 columns
 			for j in range(0, Constants.ROWS):
-				borderCells.append(Point(j, i))
+				append(Point(j, i))
 
 		return borderCells;
+
+
+	def setPath(self, path):
+		if(path != None):
+			start = self.cells[self.startLocation.x, self.startLocation.y]
+			goal = self.cells[self.goalLocation.x, self.goalLocation.y]
+
+			for index in range(len(path)):
+				if(path[index] != start and path[index] != goal):
+					self.cells[path[index].X, path[index].Y].isPath = True
 
 
 	# Saves the grid to a .map file
@@ -137,7 +135,7 @@ class Grid(Highway):
 		file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "Resources/maps")
 		
 		# Check if user clicked cancel
-		if file is None:
+		if file is None or file is '':
 			return False
 
 		# Write to file
@@ -152,7 +150,56 @@ class Grid(Highway):
 			# The actual grid (160 characters per line)
 			for row in range(Constants.ROWS):
 				for col in range(Constants.COLUMNS):
-					f.write(''.join(str(self.cells[row][col])))
+					f.write(''.join(str(self.cells[row, col])))
 				f.write('\n')
 
+			f.close()
+
+		return True
+
+
+	# Saves the grid to a .map file
+	def load(self):
+		# Bring up save dialog box
+		file = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = "Resources/maps")
+
+		# Check if user clicked cancel
+		if file is None or file is '':
+			return False
+
+		# Write to file
+		with open(file, 'r') as f:
+			index = 0
+			lines = f.read().split("\n")
+			start = lines[0]
+			goal = lines[1]
+			lines = lines[10:]
+			characters = [list(line) for line in lines]
+
+			for row in range(Constants.ROWS):
+				for col in range(Constants.COLUMNS):
+					if(characters[row][col] == '0'):
+						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].type = Type.BLOCKED
+					elif(characters[row][col] == 'a'):
+						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].type = Type.REGULAR
+						self.cells[row, col].isHighway = True
+					elif(characters[row][col] == 'b'):
+						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].type = Type.HARD
+						self.cells[row, col].isHighway = True
+					elif(characters[row][col] == '1'):
+						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].type = Type.REGULAR
+					elif(characters[row][col] == '2'):
+						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].type = Type.HARD
+
+			a, b = eval(start)
+			c, d = eval(goal)
+			self.cells[int(a), int(b)].isStart = True
+			self.cells[int(c), int(d)].isGoal = True
+			self.startLocation = Point(int(a), int(b))
+			self.goalLocation = Point(int(c), int(d))
 			f.close()

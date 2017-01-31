@@ -11,7 +11,7 @@ class Search(ABC):
 		pass
 
 	def getCell(self, point):
-		return self.grid[point.x][point.y]
+		return self.grid[point.x, point.y]
 
 	def getPath(self):
 		searchPath = []
@@ -24,6 +24,6 @@ class Search(ABC):
 			if(cell == self.start):
 				done = True
 
-			cell = cell.parent
+			cell = cell.Parent
 
 		return searchPath
