@@ -21,7 +21,10 @@ class Formulas(object):
 		for row in range(s.X-1, s.X+2):
 			done = False
 			for col in range(s.Y-1, s.Y+2):
-				if((row != s.X and col != s.Y) or (row < 0 or row > Constants.ROWS-1 or col < 0 or col > Constants.COLUMNS-1)):
+				if(row == s.X and col == s.Y):
+					continue
+
+				if(row < 0 or row > Constants.ROWS-1 or col < 0 or col > Constants.COLUMNS-1):
 					continue
 
 				if(grid[row, col].isGoal):

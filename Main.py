@@ -15,7 +15,6 @@ class GUI(object):
 		self.reloadButton = Control()				# Reload button
 		self.saveButton = Control()					# Reload button
 		self.loadButton = Control()					# Reload button
-		self.pathFound = False
 		self.astarButton = Control()				# AStar button
 		os.environ['SDL_VIDEO_CENTERED'] = '1'		# Center the window
 
