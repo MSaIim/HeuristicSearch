@@ -17,8 +17,8 @@ class Grid(Highway):
 		self.cells = np.asmatrix([[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
 		# Save the start, goal, and the eight hard to traverse centers
-		self.startLocation = Point(0,0)
-		self.goalLocation = Point(0,0)
+		self.startLocation = Cell(-1, -1)
+		self.goalLocation = Cell(-1, -1)
 		self.locations = np.array([Point(0,0) for x in range(Constants.NUM_POINTS)])
 
 		# Create the different types of cells
@@ -80,7 +80,7 @@ class Grid(Highway):
 
 			if(self.cells[point.x, point.y].type != Type.BLOCKED):
 				self.cells[point.x, point.y].isStart = True
-				self.startLocation = point
+				start = point
 				found = True
 
 		# Choose goal vertex
@@ -89,10 +89,14 @@ class Grid(Highway):
 			index = randrange(0, len(borderCells))
 			point = borderCells[index]
 
-			if(self.cells[point.x, point.y].type != Type.BLOCKED and point.distanceFrom(self.startLocation) > 100):
+			if(self.cells[point.x, point.y].type != Type.BLOCKED and point.distanceFrom(start) > 100):
 				self.cells[point.x, point.y].isGoal = True
-				self.goalLocation = point
+				goal = point
 				found = True
+
+		# Set start and goal
+		self.startLocation = self.cells[start.x, start.y]
+		self.goalLocation = self.cells[goal.x, goal.y]
 
 
 	# Get border points
@@ -121,14 +125,9 @@ class Grid(Highway):
 
 	def setPath(self, path):
 		if(path != None):
-			start = self.cells[self.startLocation.x, self.startLocation.y]
-			goal = self.cells[self.goalLocation.x, self.goalLocation.y]
-
 			for index in range(len(path)):
-				if(path[index] != start and path[index] != goal):
+				if(path[index] != self.startLocation and path[index] != self.goalLocation):
 					self.cells[path[index].X, path[index].Y].isPath = True
-
-
 
 
 	# Saves the grid to a .map file
@@ -200,8 +199,10 @@ class Grid(Highway):
 
 			a, b = eval(start)
 			c, d = eval(goal)
-			self.cells[int(a), int(b)].isStart = True
-			self.cells[int(c), int(d)].isGoal = True
-			self.startLocation = Point(int(a), int(b))
-			self.goalLocation = Point(int(c), int(d))
+			x1, y1 = int(a), int(b)
+			x2, y2 = int(c), int(d)
+			self.cells[a, b].isStart = True
+			self.cells[c, d].isGoal = True
+			self.startLocation = self.cells[a, b]
+			self.goalLocation = self.cells[c, d]
 			f.close()

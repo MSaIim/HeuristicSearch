@@ -12,14 +12,14 @@ DARK_YELLOW = (167, 198, 79)
 NEON_GREEN = (180, 253, 11)
 
 # Constans for the squares
-WIDTH = 4
-HEIGHT = 4
+WIDTH = 5
+HEIGHT = 5
 MARGIN = 1
 X_OFFSET = 20
 Y_OFFSET = 20
 
 # Window size
-WINDOW_SIZE = [1100, 640]
+WINDOW_SIZE = [1300, 760]
 
 # Grid Constants
 ROWS = 120
