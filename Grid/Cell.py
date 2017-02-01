@@ -34,7 +34,7 @@ class Cell(object):
 		self.isPath = False
 
 	def __lt__(self, other):
-		return (self.X, self.Y) < (other.X, other.Y)
+		return self.G < other.G
 
 	# Equals method for use with lists (in, not in)
 	def __eq__(self, other):

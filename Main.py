@@ -5,6 +5,7 @@ from Grid.Grid import Grid
 from Grid.Cell import Type
 from Algorithms.Search import Search
 from Algorithms.AStar import AStar
+from Algorithms.AStarWeighted import AStarWeighted
 
 
 class GUI(object):
@@ -16,6 +17,7 @@ class GUI(object):
 		self.saveButton = Control()					# Reload button
 		self.loadButton = Control()					# Reload button
 		self.astarButton = Control()				# AStar button
+		self.astarWeightedButton = Control()		# AStarWeighted button
 		os.environ['SDL_VIDEO_CENTERED'] = '1'		# Center the window
 
 		# Set the screen size, title, and icon
@@ -59,6 +61,9 @@ class GUI(object):
 					elif self.astarButton.pressed(pos):
 						astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
 						self.grid.setPath(astarAlgo.search())
+					elif self.astarWeightedButton.pressed(pos):
+						astarWeightedAlgo = AStarWeighted(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, 2.5)
+						self.grid.setPath(astarWeightedAlgo.search())
 					
 					# Convert x/y screen coordinates to grid coordinates				 
 					column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate
@@ -90,6 +95,7 @@ class GUI(object):
 		self.saveButton.create_button(self.screen, Constants.DARK_BLUE, 970, 527, 110, 40, 0, "Save Map", (255,255,255))
 		self.reloadButton.create_button(self.screen, Constants.PINK, 850, 577, 230, 45, 0, "Regenerate Map", (255,255,255))
 		self.astarButton.create_button(self.screen, Constants.DARK_BLUE, 850, 430, 90, 40, 0, "AStar", (255,255,255))
+		self.astarWeightedButton.create_button(self.screen, Constants.DARK_BLUE, 950, 430, 120, 40, 0, "Weighted", (255,255,255))
 
 		# Draw text (surface, text, text_color, length, height, x, y)
 		self.optionsText.write_text(self.screen, "Options", Constants.BLACK, 150, 100, 890, 450)

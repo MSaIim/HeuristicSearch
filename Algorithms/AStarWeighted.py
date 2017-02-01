@@ -2,10 +2,11 @@ from Algorithms.Heap import PriorityQueue
 from Algorithms.Search import Search
 from Algorithms.Formulas import Formulas
 
-class AStar(Search):
-	def __init__(self, grid, start, goal):
+class AStarWeighted(Search):
+	def __init__(self, grid, start, goal, weight):
 		super().__init__(grid, start, goal)
 		self.fringe = PriorityQueue()
+		self.weight = weight
 
 
 	def search(self):
@@ -14,7 +15,7 @@ class AStar(Search):
 
 		self.start.G = 0
 		self.start.Parent = self.start
-		self.fringe.push(self.start, self.start.G + Formulas.AStarHeuristic(self.start, self.goal))
+		self.fringe.push(self.start, self.start.G + self.weight * Formulas.AStarHeuristic(self.start, self.goal))
 
 		while(self.fringe.isEmpty() == False):
 			s = self.fringe.pop();
@@ -43,4 +44,4 @@ class AStar(Search):
 			if(self.fringe.contains(sprime)):
 				self.fringe.remove(sprime)
 
-			self.fringe.push(sprime, sprime.G + Formulas.AStarHeuristic(sprime, self.goal))
+			self.fringe.push(sprime, sprime.G + self.weight * Formulas.AStarHeuristic(sprime, self.goal))
