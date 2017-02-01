@@ -98,7 +98,7 @@ class GUI(object):
 
 			# Mouse over cell
 			x, y = pygame.mouse.get_pos()
-			pygame.draw.rect(self.gridSurface, Constants.NEON_GREEN, [x-24, y-24, 8, 8], 1)
+			pygame.draw.rect(self.gridSurface, Constants.NEON_GREEN, [x-22, y-22, 8, 8], 1)
 
 			# Draw grid area onto the screen with given offset
 			self.screen.blit(self.gridSurface, (Constants.X_OFFSET, Constants.Y_OFFSET))
@@ -161,12 +161,12 @@ class GUI(object):
 					self.write_info()
 					
 			# Convert x/y screen coordinates to grid coordinates				 
-			column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 3	 # Change the x screen coordinate to grid coordinate
-			row = pos[1] // (Constants.HEIGHT + Constants.MARGIN) - 3	 # Change the y screen coordinate to grid coordinate
+			column = pos[0] // (Constants.WIDTH + Constants.MARGIN) - 3
+			row = pos[1] // (Constants.HEIGHT + Constants.MARGIN) - 3
 
 			# Print out the coordinates if clicked inside grid
 			if(row > -1 and row < Constants.ROWS and column > -1 and column < Constants.COLUMNS):
-				# Get cell at position and get information
+			# Get cell at position and get information
 				self.cell = self.grid.cells[row, column]
 				self.hn = self.heuristic(self.cell, self.grid.goalLocation, self.grid.cells)
 				self.fn = self.cell.G + self.hn
