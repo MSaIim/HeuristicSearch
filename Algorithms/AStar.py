@@ -1,11 +1,11 @@
-from Algorithms.Heap import PriorityQueue
+import math, Algorithms.Heap
+import Algorithms.Formulas as Formulas
 from Algorithms.Search import Search
-from Algorithms.Formulas import Formulas
 
 class AStar(Search):
 	def __init__(self, grid, start, goal):
 		super().__init__(grid, start, goal)
-		self.fringe = PriorityQueue()
+		self.fringe = Algorithms.Heap.PriorityQueue()
 
 
 	def search(self):
@@ -22,12 +22,13 @@ class AStar(Search):
 
 			for sprime in Formulas.Successors(s, self.grid):
 				if(sprime == self.goal):
+					sprime.G = s.G + Formulas.PathCost(s, sprime)
 					sprime.Parent = s
 					return self.getPath()
 
 				if(sprime not in closed):
 					if(self.fringe.contains(sprime) == False):
-						sprime.G = float("inf")
+						sprime.G = math.inf
 						sprime.Parent = None
 
 					self.updateVertex(s, sprime)
@@ -36,8 +37,10 @@ class AStar(Search):
 
 
 	def updateVertex(self, s, sprime):
-		if(s.G + Formulas.PathCost(s, sprime) < sprime.G):
-			sprime.G = s.G + Formulas.PathCost(s, sprime)
+		cost = Formulas.PathCost(s, sprime)
+
+		if(s.G + cost < sprime.G):
+			sprime.G = s.G + cost
 			sprime.Parent = s
 
 			if(self.fringe.contains(sprime)):

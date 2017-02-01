@@ -1,7 +1,7 @@
 import math
-from functools import total_ordering
 from enum import Enum
-from Utilities import Constants
+from functools import total_ordering
+import Utilities.Constants as Constants
 
 # Enum class to know the Cell's type
 class Type(Enum):
@@ -27,18 +27,18 @@ class Cell(object):
 		self.type = Type.REGULAR
 
 		# For algorithms
-		self.X = int(x)
-		self.Y = int(y)
-		self.G = float("inf")
+		self.X = x
+		self.Y = y
+		self.G = math.inf
 		self.Parent = None
 		self.isPath = False
 
 	def __lt__(self, other):
-		return self.G < other.G
+		return self.G > other.G
 
 	# Equals method for use with lists (in, not in)
 	def __eq__(self, other):
-		return int(self.X) == int(other.X) and int(self.Y) == int(other.Y)
+		return self.X == other.X and self.Y == other.Y
 
 	# Python's toString() method
 	def __str__(self):
@@ -57,8 +57,8 @@ class Cell(object):
 # Point class to hold coordinates
 class Point(object):
 	def __init__(self, x, y, direction = Direction.NONE):
-		self.x = int(x)
-		self.y = int(y)
+		self.x = x
+		self.y = y
 		self.direction = direction
 
 	# Check if point is a boundary coordinate
@@ -75,7 +75,7 @@ class Point(object):
 
 	# Equals method for use with lists (in, not in)
 	def __eq__(self, other):
-		return int(self.x) == int(other.x) and int(self.y) == int(other.y)
+		return self.x == other.x and self.y == other.y
 
 	# Python's toString() method
 	def __str__(self):

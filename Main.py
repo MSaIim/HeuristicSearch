@@ -1,5 +1,5 @@
-import pygame, os
-from Utilities import Constants
+import pygame, os, math
+import Utilities.Constants as Constants
 from Utilities.Controls import Control
 from Grid.Grid import Grid
 from Grid.Cell import Type
@@ -11,6 +11,7 @@ from Algorithms.AStarWeighted import AStarWeighted
 class GUI(object):
 	def __init__(self):
 		self.grid = Grid()							# Setup the grid
+		self.gridRects = []
 
 		self.optionsText = Control()				# Options text
 		self.reloadButton = Control()				# Reload button
@@ -36,45 +37,17 @@ class GUI(object):
 	# Any updates to be made while the program is running
 	def update(self):
 		done = False
+		self.screen.fill(Constants.WHITE)
 
 		while not done:
-			self.grid_image.fill(Constants.GREEN)
-			self.screen.fill(Constants.WHITE)
-
-
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					done = True
-				elif event.type == pygame.MOUSEBUTTONDOWN:
-					# Get the position from mouse click
-					pos = pygame.mouse.get_pos()	
 
-					# RELOAD BUTTON CLICKED
-					if self.reloadButton.pressed(pos):
-						self.grid = Grid()
-					# LOAD BUTTON CLICKED
-					elif self.loadButton.pressed(pos):
-						self.grid.load()
-					# SAVE BUTTON CLICKED
-					elif self.saveButton.pressed(pos):
-						self.grid.save()
-					elif self.astarButton.pressed(pos):
-						astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
-						self.grid.setPath(astarAlgo.search())
-					elif self.astarWeightedButton.pressed(pos):
-						astarWeightedAlgo = AStarWeighted(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, 2.5)
-						self.grid.setPath(astarWeightedAlgo.search())
-					
-					# Convert x/y screen coordinates to grid coordinates				 
-					column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate
-					row = pos[1] // (Constants.HEIGHT + Constants.MARGIN) - 4	 # Change the y screen coordinate to grid coordinate
+				# Handle other input
+				self.handleInput(event)
 
-					# Print out the coordinates if clicked inside grid
-					if(row > -1 and row < Constants.ROWS and column > -1 and column < Constants.COLUMNS):
-						print("Grid coordinates: (", row, ",", column, ")")
-					
-
-			# Draw the grid
+			# Draw calls
 			self.draw()
 
 			# Update the screen
@@ -86,6 +59,9 @@ class GUI(object):
 
 	# All the draw calls for the screen
 	def draw(self):
+		# Reset the grid
+		self.grid_image.fill(Constants.GREEN)
+
 		# Draw boxes (surface, color, rectangle[x, y, width, height], width)
 		pygame.draw.rect(self.screen, Constants.BLACK, [18, 18, 805, 605], 1)			# Border around grid
 		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [850, 18, 230, 400], 1)		# Box on right
@@ -100,6 +76,50 @@ class GUI(object):
 		# Draw text (surface, text, text_color, length, height, x, y)
 		self.optionsText.write_text(self.screen, "Options", Constants.BLACK, 150, 100, 890, 450)
 
+		# Draw the grid
+		self.drawGrid()
+
+		# Mouse over cell
+		x, y = pygame.mouse.get_pos()
+		pygame.draw.rect(self.grid_image, Constants.NEON_GREEN, [x-22, y-22, 6, 6], 1)
+
+		# Draw grid area onto the screen with given offset
+		self.screen.blit(self.grid_image, (Constants.X_OFFSET, Constants.Y_OFFSET))
+
+
+	# Handle any input
+	def handleInput(self, event):
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			# Get the position from mouse click
+			pos = pygame.mouse.get_pos()	
+
+			# RELOAD BUTTON CLICKED
+			if self.reloadButton.pressed(pos):
+				self.grid = Grid()
+			# LOAD BUTTON CLICKED
+			elif self.loadButton.pressed(pos):
+				self.grid.load()
+			# SAVE BUTTON CLICKED
+			elif self.saveButton.pressed(pos):
+				self.grid.save()
+			elif self.astarButton.pressed(pos):
+				astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
+				self.grid.setPath(astarAlgo.search())
+			elif self.astarWeightedButton.pressed(pos):
+				astarWeightedAlgo = AStarWeighted(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, 2.5)
+				self.grid.setPath(astarWeightedAlgo.search())
+					
+			# Convert x/y screen coordinates to grid coordinates				 
+			column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 4	 # Change the x screen coordinate to grid coordinate
+			row = pos[1] // (Constants.HEIGHT + Constants.MARGIN) - 4	 # Change the y screen coordinate to grid coordinate
+
+			# Print out the coordinates if clicked inside grid
+			if(row > -1 and row < Constants.ROWS and column > -1 and column < Constants.COLUMNS):
+				print("Grid coordinates: (", row, ",", column, ")")
+
+
+	# Draw the grid
+	def drawGrid(self):
 		# Draw the grid
 		full_width, full_height = Constants.MARGIN + Constants.WIDTH, Constants.MARGIN + Constants.HEIGHT
 
@@ -117,7 +137,7 @@ class GUI(object):
 					color = Constants.DARK_BLUE			# Highway and hard to traverse
 				if cell.isHighway and cell.type == Type.REGULAR:
 					color = Constants.LIGHT_BLUE		# Highway and regular
-				
+					
 				if cell.isStart == True:			
 					color = Constants.WHITE				# Start vertex
 				if cell.isGoal == True:			
@@ -130,9 +150,6 @@ class GUI(object):
 
 				# Draw the cell
 				pygame.draw.rect(self.grid_image, color, [full_width * column + Constants.MARGIN, full_height * row + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT])
-
-		# Draw grid area onto the screen with given offset
-		self.screen.blit(self.grid_image, (Constants.X_OFFSET, Constants.Y_OFFSET))
 
 
 # Check if this script is being run directly (if it is, then __name__ becomes __main__)

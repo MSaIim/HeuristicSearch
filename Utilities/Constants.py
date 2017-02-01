@@ -9,6 +9,7 @@ LIGHT_BLUE = (62, 127, 188)
 GREEN = (39, 186, 137)
 YELLOW = (244, 241, 66)
 DARK_YELLOW = (167, 198, 79)
+NEON_GREEN = (180, 253, 11)
 
 # Constans for the squares
 WIDTH = 4

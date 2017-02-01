@@ -1,5 +1,4 @@
 import pygame
-from pygame.locals import *
 
 class Control(object):
 	def create_button(self, surface, color, x, y, length, height, width, text, text_color):

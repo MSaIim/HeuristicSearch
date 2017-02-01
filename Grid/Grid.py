@@ -2,7 +2,7 @@ import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 from random import randrange, uniform
-from Utilities import Constants
+import Utilities.Constants as Constants
 from Grid.Cell import Cell, Type, Point
 from Grid.Highway import Highway
 
@@ -127,6 +127,8 @@ class Grid(Highway):
 			for index in range(len(path)):
 				if(path[index] != start and path[index] != goal):
 					self.cells[path[index].X, path[index].Y].isPath = True
+
+
 
 
 	# Saves the grid to a .map file

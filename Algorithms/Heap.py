@@ -1,5 +1,4 @@
 import heapq
-from Utilities import Constants
 
 class PriorityQueue(object):
 	def __init__(self):
