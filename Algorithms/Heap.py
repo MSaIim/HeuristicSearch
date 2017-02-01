@@ -5,22 +5,27 @@ class PriorityQueue(object):
 		self.heap = []
 
 
+	# Push an item onto the heap with the given priority
 	def push(self, item, priority):
 		heapq.heappush(self.heap, (priority, item))
 
 
+	# Pop the item that has the highest priority (lowest number)
 	def pop(self):
 		return heapq.heappop(self.heap)[1]
 
 
+	# Check if and item is inside the heap
 	def contains(self, item):
 		return item in [x[1] for x in self.heap]
 
 
+	# Check if the heap is empty
 	def isEmpty(self):
 		return len(self.heap) == 0
 
 
+	# Remove and item from the heap and bubble up
 	def remove(self, item):
 		index = 0
 

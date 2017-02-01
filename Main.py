@@ -1,12 +1,14 @@
 import pygame, os, math
-import Utilities.Constants as Constants
 import Algorithms.Formulas as Formulas
+import Utilities.Constants as Constants
+from tkinter import messagebox
 from Utilities.Controls import Control
 from Grid.Grid import Grid
 from Grid.Cell import Type
 from Algorithms.Search import Search
 from Algorithms.AStar import AStar
-from Algorithms.AStarWeighted import AStarWeighted
+from Algorithms.WeightedAStar import WeightedAStar
+from Algorithms.UniformCost import UniformCost
 
 
 class GUI(object):
@@ -17,11 +19,18 @@ class GUI(object):
 		self.saveButton = Control()					# Reload button
 		self.loadButton = Control()					# Reload button
 		self.astarButton = Control()				# AStar button
-		self.astarWeightedButton = Control()		# AStarWeighted button
+		self.weightedAStarButton = Control()		# AStarWeighted button
 		self.uniformCostButton = Control()			# Uniform Cost button
 
-		# For information
+		# For heuristics (ManhattanDistance, EuclideanDistance, EuclideanDistanceSqaured)
+		self.heuristic = Formulas.ManhattanDistance
 
+		# For information
+		self.cell = None
+		self.fn = 0.0
+		self.gn = 0.0
+		self.hn = 0.0
+		self.time = 0
 
 		# Set the screen size, position, title, and icon
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -66,7 +75,7 @@ class GUI(object):
 		self.saveButton.create_button(self.screen, Constants.DARK_BLUE, 1150, 650, 110, 40, 0, "Save Map", (255,255,255))
 		self.reloadButton.create_button(self.screen, Constants.PINK, 1030, 695, 230, 45, 0, "Regenerate Map", (255,255,255))
 		self.astarButton.create_button(self.screen, Constants.DARK_BLUE, 1055, 295, 180, 40, 0, "   AStar   ", (255,255,255))
-		self.astarWeightedButton.create_button(self.screen, Constants.DARK_BLUE, 1055, 345, 180, 40, 0, "Weighted A*", (255,255,255))
+		self.weightedAStarButton.create_button(self.screen, Constants.DARK_BLUE, 1055, 345, 180, 40, 0, "Weighted A*", (255,255,255))
 		self.uniformCostButton.create_button(self.screen, Constants.DARK_BLUE, 1055, 395, 180, 40, 0, "Uniform Cost", (255,255,255))
 
 
@@ -89,7 +98,7 @@ class GUI(object):
 
 			# Mouse over cell
 			x, y = pygame.mouse.get_pos()
-			pygame.draw.rect(self.gridSurface, Constants.NEON_GREEN, [x-22, y-22, 8, 8], 1)
+			pygame.draw.rect(self.gridSurface, Constants.NEON_GREEN, [x-24, y-24, 8, 8], 1)
 
 			# Draw grid area onto the screen with given offset
 			self.screen.blit(self.gridSurface, (Constants.X_OFFSET, Constants.Y_OFFSET))
@@ -109,21 +118,47 @@ class GUI(object):
 
 			# RELOAD BUTTON CLICKED
 			if self.reloadButton.pressed(pos):
+				del self.grid
 				self.grid = Grid()
 				self.setup()
+				self.cell = None
+				self.fn = 0.0
+				self.gn = 0.0
+				self.hn = 0.0
+				self.time = 0
+
 			# LOAD BUTTON CLICKED
 			elif self.loadButton.pressed(pos):
 				self.grid.load()
 				self.setup()
+
 			# SAVE BUTTON CLICKED
 			elif self.saveButton.pressed(pos):
 				self.grid.save()
+
+			# ASTAR BUTTON CLICKED
 			elif self.astarButton.pressed(pos):
-				astarAlgo = AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation)
-				self.grid.setPath(astarAlgo.search())
-			elif self.astarWeightedButton.pressed(pos):
-				astarWeightedAlgo = AStarWeighted(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, 2.5)
-				self.grid.setPath(astarWeightedAlgo.search())
+				with AStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation) as astar:
+					found = astar.search()
+					if(found):
+						self.grid.setPath(astar.getPath())
+					else:
+						messagebox.showinfo("AStar Results", "No path could be found to the goal.")
+
+					self.time = astar.time
+					self.write_info()
+
+			# WEIGHTED ASTAR BUTTON CLICKED
+			elif self.weightedAStarButton.pressed(pos):
+				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 2) as weightedAStar:
+					found = weightedAStar.search()
+					if(found):
+						self.grid.setPath(weightedAStar.getPath())
+					else:
+						messagebox.showinfo("Weighted AStar Results", "No path could be found to the goal.")
+
+					self.time = weightedAStar.time
+					self.write_info()
 					
 			# Convert x/y screen coordinates to grid coordinates				 
 			column = pos[0] // (Constants.WIDTH + Constants.MARGIN)	- 3	 # Change the x screen coordinate to grid coordinate
@@ -131,18 +166,13 @@ class GUI(object):
 
 			# Print out the coordinates if clicked inside grid
 			if(row > -1 and row < Constants.ROWS and column > -1 and column < Constants.COLUMNS):
-				self.setup()
+				# Get cell at position and get information
+				self.cell = self.grid.cells[row, column]
+				self.hn = self.heuristic(self.cell, self.grid.goalLocation, self.grid.cells)
+				self.fn = self.cell.G + self.hn
 
-				# Get cell at position
-				cell = self.grid.cells[row, column]
-				hn = Formulas.AStarHeuristic(cell, self.grid.goalLocation)
-				fn = cell.G + hn
-
-				# Draw text (surface, text, text_color, text_size, x, y)
-				self.write_text("".join(["(", str(row), ", ", str(column), ")"]), Constants.BLACK, 16, 1130, 65)
-				self.write_text(f'{fn:.6f}', Constants.BLACK, 16, 1130, 95)
-				self.write_text(f'{cell.G:.6f}', Constants.BLACK, 16, 1130, 125)
-				self.write_text(f'{hn:.6f}', Constants.BLACK, 16, 1130, 155)
+				# Write the information
+				self.write_info()
 
 
 	# Draw the grid
@@ -184,6 +214,21 @@ class GUI(object):
 		myFont.set_bold(True)
 		myText = myFont.render(text, 1, text_color)
 		self.screen.blit(myText, (x, y))
+
+
+	def write_info(self):
+		# Reset screen
+		self.setup()
+
+		# Draw text (surface, text, text_color, text_size, x, y)
+		if(self.cell is not None):
+			self.write_text("".join(["(", str(self.cell.X), ", ", str(self.cell.Y), ")"]), Constants.BLACK, 16, 1130, 65)
+			self.write_text(f'{self.fn:.6f}', Constants.BLACK, 16, 1130, 97)
+			self.write_text(f'{self.cell.G:.6f}', Constants.BLACK, 16, 1130, 127)
+			self.write_text(f'{self.hn:.6f}', Constants.BLACK, 16, 1130, 157)
+
+		self.write_text("".join([str(self.time), " ms"]), Constants.BLACK, 16, 1130, 187)
+
 
 # Check if this script is being run directly (if it is, then __name__ becomes __main__)
 if __name__ == '__main__':

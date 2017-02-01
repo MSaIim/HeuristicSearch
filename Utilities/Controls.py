@@ -30,4 +30,3 @@ class Control(object):
 						return True
 
 		return False
-

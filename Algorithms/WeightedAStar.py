@@ -2,13 +2,15 @@ import math, time, Algorithms.Heap
 import Algorithms.Formulas as Formulas
 from Algorithms.Search import Search
 
-class AStar(Search):
-	def __init__(self, grid, start, goal):
+class WeightedAStar(Search):
+	def __init__(self, grid, start, goal, heuristic, weight):
 		super().__init__(grid, start, goal)
 		self.time = 0
 		self.fringe = Algorithms.Heap.PriorityQueue()
+		self.weight = weight
+		self.Heuristic = heuristic
 
-		
+
 	# Start the algoirthm. Searches for the best path based on the heuristic.
 	def search(self):
 		startTime = int(round(time.time() * 1000))	# Get when the algorithm started
@@ -20,11 +22,11 @@ class AStar(Search):
 		# Set distance from start and set parent to itself. Push to the heap with heuristic as priority
 		self.start.G = 0
 		self.start.Parent = self.start
-		self.fringe.push(self.start, self.start.G + self.Heuristic(self.start))
+		self.fringe.push(self.start, self.start.G + self.weight * self.Heuristic(self.start, self.goal, self.grid))
 
 		# Loop until goal is found or fringe is empty (no more nodes to expand)
 		while(self.fringe.isEmpty() == False):
-
+			
 			# Get highest priority cell (lowest number)
 			s = self.fringe.pop();
 
@@ -42,7 +44,6 @@ class AStar(Search):
 					if(self.fringe.contains(sprime) == False):		# ** MAY NOT NEED THESE LINES **
 						sprime.G = math.inf							# We set the default values when
 						sprime.Parent = None						# we first create the cells.
-
 					self.updateVertex(s, sprime)
 
 		# No path found
@@ -65,13 +66,4 @@ class AStar(Search):
 				self.fringe.remove(sprime)
 
 			# Push the updated cell in
-			self.fringe.push(sprime, sprime.G + self.Heuristic(sprime))
-
-
-	# Heuristic to guide the A* along the optimal path
-	def Heuristic(self, s):
-		a = math.sqrt(2)
-		min_XY = min(abs(s.X - self.goal.X), abs(s.Y - self.goal.Y))
-		max_XY = max(abs(s.X - self.goal.X), abs(s.Y - self.goal.Y))
-
-		return (a * min_XY) + max_XY - min_XY
+			self.fringe.push(sprime, sprime.G + self.Heuristic(sprime, self.goal, self.grid))

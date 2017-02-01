@@ -33,6 +33,7 @@ class Cell(object):
 		self.Parent = None
 		self.isPath = False
 
+	# Used for tie breakers inside the heap. Checks which one is the larger G value
 	def __lt__(self, other):
 		return self.G > other.G
 
