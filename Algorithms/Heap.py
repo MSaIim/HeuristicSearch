@@ -12,7 +12,7 @@ class PriorityQueue(object):
 
 	# Pop the item that has the highest priority (lowest number)
 	def pop(self):
-		return heapq.heappop(self.heap)[1]
+		return heapq.heappop(self.heap)
 
 
 	# Check if and item is inside the heap

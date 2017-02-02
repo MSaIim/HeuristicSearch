@@ -299,7 +299,7 @@ class Grid(object):
 	def save(self):
 		# Bring up save dialog box
 		file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "Resources/maps")
-		
+
 		# Check if user clicked cancel
 		if file is None or file is '':
 			return False

@@ -14,6 +14,7 @@ from Algorithms.UniformCost import UniformCost
 class GUI(object):
 	def __init__(self):
 		self.grid = Grid()							# Setup the grid
+		self.warning = False						# For warning pop ups
 
 		self.reloadButton = Control()				# Reload button
 		self.saveButton = Control()					# Reload button
@@ -24,13 +25,6 @@ class GUI(object):
 
 		# For heuristics (ManhattanDistance, EuclideanDistance, EuclideanDistanceSqaured)
 		self.heuristic = Formulas.ManhattanDistance
-
-		# For information
-		self.cell = None
-		self.fn = 0.0
-		self.gn = 0.0
-		self.hn = 0.0
-		self.time = 0
 
 		# Set the screen size, position, title, and icon
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -44,9 +38,10 @@ class GUI(object):
 
 		# Used to manage how fast the screen updates (60 FPS)
 		clock = pygame.time.Clock()
-		clock.tick(60)
+		clock.tick(120)
 
 		# Setup the interface
+		self.resetInformation()
 		self.setup()
 
 	# Setup the interface with buttons and text
@@ -121,11 +116,7 @@ class GUI(object):
 				del self.grid
 				self.grid = Grid()
 				self.setup()
-				self.cell = None
-				self.fn = 0.0
-				self.gn = 0.0
-				self.hn = 0.0
-				self.time = 0
+				self.resetInformation()
 
 			# LOAD BUTTON CLICKED
 			elif self.loadButton.pressed(pos):
@@ -150,7 +141,7 @@ class GUI(object):
 
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
-				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 2) as weightedAStar:
+				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 20) as weightedAStar:
 					found = weightedAStar.search()
 					if(found):
 						self.grid.setPath(weightedAStar.getPath())
@@ -158,6 +149,23 @@ class GUI(object):
 						messagebox.showinfo("Weighted AStar Results", "No path could be found to the goal.")
 
 					self.time = weightedAStar.time
+					self.write_info()
+
+			# UNIFORM COST BUTTON CLICKED
+			elif self.uniformCostButton.pressed(pos):
+				# Show warning as the time complexity is O(b^(C*/e))
+				if(self.warning == False):
+					messagebox.showinfo("Uniform Cost Search", "Please note, the uniform cost algorithm can take up to 3 minutes.")
+					self.warning = True
+
+				with UniformCost(self.grid.cells, self.grid.startLocation, self.grid.goalLocation) as uniformCost:
+					found = uniformCost.search()
+					if(found):
+						self.grid.setPath(uniformCost.getPath())
+					else:
+						messagebox.showinfo("Uniform Cost Results", "No path could be found to the goal.")
+
+					self.time = uniformCost.time
 					self.write_info()
 					
 			# Convert x/y screen coordinates to grid coordinates				 
@@ -209,6 +217,7 @@ class GUI(object):
 				pygame.draw.rect(self.gridSurface, color, [full_width * column + Constants.MARGIN, full_height * row + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT])
 
 
+	# Write text on the screen
 	def write_text(self, text, text_color, text_size, x, y):
 		myFont = pygame.font.SysFont("Calibri", text_size)
 		myFont.set_bold(True)
@@ -216,6 +225,7 @@ class GUI(object):
 		self.screen.blit(myText, (x, y))
 
 
+	# Fill in the information box on the right
 	def write_info(self):
 		# Reset screen
 		self.setup()
@@ -230,7 +240,16 @@ class GUI(object):
 		self.write_text("".join([str(self.time), " ms"]), Constants.BLACK, 16, 1130, 187)
 
 
+	# Reset the information on the right
+	def resetInformation(self):
+		self.cell = None
+		self.fn = 0.0
+		self.gn = 0.0
+		self.hn = 0.0
+		self.time = 0
+
+
 # Check if this script is being run directly (if it is, then __name__ becomes __main__)
 if __name__ == '__main__':
-    gui = GUI()
-    gui.run()
+	gui = GUI()
+	gui.run()

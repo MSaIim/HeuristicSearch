@@ -26,7 +26,7 @@ class AStar(Search):
 		while(self.fringe.isEmpty() == False):
 
 			# Get highest priority cell (lowest number)
-			s = self.fringe.pop();
+			s = self.fringe.pop()[1];
 
 			# Goal found, stop the loop
 			if(s == self.goal):
