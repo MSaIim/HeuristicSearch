@@ -69,7 +69,6 @@ def Successors(s, grid):
 
 	# Start from the top left of the 's' cell and get all cells that are not blocked
 	for row in range(s.X-1, s.X+2):
-		done = False
 		for col in range(s.Y-1, s.Y+2):
 			# If row and column are on 's' or if the row and column are out of bounds, skip
 			if(row == s.X and col == s.Y):
@@ -77,17 +76,8 @@ def Successors(s, grid):
 			if(row < 0 or row > Constants.ROWS-1 or col < 0 or col > Constants.COLUMNS-1):
 				continue
 
-			# If cell is the goal, then just return the goal
-			if(grid[row, col].isGoal):
-				done = True
-				cells.clear()
+			if(grid[row, col].type != Type.BLOCKED):
 				append(grid[row, col])
-				break
-			elif(grid[row, col].type != Type.BLOCKED):
-				append(grid[row, col])
-
-		if done:
-			break
 
 	return cells
 

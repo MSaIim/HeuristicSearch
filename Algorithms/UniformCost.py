@@ -1,5 +1,7 @@
+import numpy as np
 import math, time, Algorithms.Heap
 import Algorithms.Formulas as Formulas
+import Utilities.Constants as Constants
 from Algorithms.Search import Search
 
 class UniformCost(Search):
@@ -13,9 +15,9 @@ class UniformCost(Search):
 		# Start algorithm
 		startTime = int(round(time.time() * 1000))
 		
-		# Start algorithm
-		closed = []
-		closedAppend = closed.append
+		# 2D array of booleans to know which cell is in the fringe or closed list
+		openList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
+		closedList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
 		# Push start to fringe
 		self.fringe.push(self.start, 0)
@@ -25,6 +27,7 @@ class UniformCost(Search):
 
 			# Get highest priority cell (lowest number)
 			cost, s = self.fringe.pop();
+			openList[s.X, s.Y] = False
 
 			# Goal found, stop the loop
 			if(s == self.goal):
@@ -32,19 +35,20 @@ class UniformCost(Search):
 				return True
 
 			# Add it to visited list
-			closedAppend(s)
+			closedList[s.X, s.Y] = True
 
 			# Expand the current node 's' to get its children to add to the fringe
 			for sprime in Formulas.Successors(s, self.grid):
 				total_cost = cost + Formulas.PathCost(s, sprime)	
 
 				# Check if in closed or the fringe
-				if(sprime not in closed and self.fringe.contains(sprime) == False):
+				if(closedList[sprime.X, sprime.Y] == False and openList[sprime.X, sprime.Y] == False):
 					sprime.Parent = s
+					openList[sprime.X, sprime.Y] = True
 					self.fringe.push(sprime, total_cost)
 
 				# Check if in fringe and if child path cost is greater
-				elif(self.fringe.contains(sprime) and total_cost > cost):
+				elif(openList[sprime.X, sprime.Y] and total_cost > cost):
 					sprime.Parent = s
 					self.fringe.remove(sprime)
 					self.fringe.push(sprime, total_cost)
