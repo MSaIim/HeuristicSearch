@@ -1,3 +1,6 @@
+import numpy as np
+import Algorithms.Heap
+import Utilities.Constants as Constants
 from abc import ABC, abstractmethod
 
 # Abstract class Search
@@ -6,6 +9,15 @@ class Search(ABC):
 		self.grid = grid
 		self.start = start
 		self.goal = goal
+		self.time = 0
+
+		# Min Heap to hold nodes that might be expanded
+		self.fringe = Algorithms.Heap.PriorityQueue()
+
+		# 2D array of booleans to know which cell is in the fringe
+		self.openList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
+		self.closedList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
+
 
 	# All Search algorithms should have their own way to find the path
 	@abstractmethod

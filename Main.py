@@ -14,7 +14,6 @@ from Algorithms.UniformCost import UniformCost
 class GUI(object):
 	def __init__(self):
 		self.grid = Grid()							# Setup the grid
-		self.warning = False						# For warning pop ups
 
 		self.reloadButton = Control()				# Reload button
 		self.saveButton = Control()					# Reload button
@@ -43,6 +42,7 @@ class GUI(object):
 		# Setup the interface
 		self.resetInformation()
 		self.setup()
+
 
 	# Setup the interface with buttons and text
 	def setup(self):
@@ -93,7 +93,7 @@ class GUI(object):
 
 			# Mouse over cell
 			x, y = pygame.mouse.get_pos()
-			pygame.draw.rect(self.gridSurface, Constants.NEON_GREEN, [x-22, y-22, 8, 8], 1)
+			pygame.draw.rect(self.gridSurface, Constants.RED, [x-22, y-22, 8, 8], 1)
 
 			# Draw grid area onto the screen with given offset
 			self.screen.blit(self.gridSurface, (Constants.X_OFFSET, Constants.Y_OFFSET))
@@ -141,7 +141,7 @@ class GUI(object):
 
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
-				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 20) as weightedAStar:
+				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 2) as weightedAStar:
 					found = weightedAStar.search()
 					if(found):
 						self.grid.setPath(weightedAStar.getPath())
@@ -153,11 +153,6 @@ class GUI(object):
 
 			# UNIFORM COST BUTTON CLICKED
 			elif self.uniformCostButton.pressed(pos):
-				# Show warning as the time complexity is O(b^(C*/e))
-				if(self.warning == False):
-					messagebox.showinfo("Uniform Cost Search", "Please note, the uniform cost algorithm can take up to 3 minutes.")
-					self.warning = True
-
 				with UniformCost(self.grid.cells, self.grid.startLocation, self.grid.goalLocation) as uniformCost:
 					found = uniformCost.search()
 					if(found):
@@ -235,7 +230,7 @@ class GUI(object):
 			self.write_text("".join(["(", str(self.cell.X), ", ", str(self.cell.Y), ")"]), Constants.BLACK, 16, 1130, 65)
 			self.write_text(f'{self.fn:.6f}', Constants.BLACK, 16, 1130, 97)
 			self.write_text(f'{self.cell.G:.6f}', Constants.BLACK, 16, 1130, 127)
-			self.write_text(f'{self.hn:.6f}', Constants.BLACK, 16, 1130, 157)
+			self.write_text(f'{self.hn:.2f}', Constants.BLACK, 16, 1130, 157)
 
 		self.write_text("".join([str(self.time), " ms"]), Constants.BLACK, 16, 1130, 187)
 

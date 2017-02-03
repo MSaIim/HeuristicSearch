@@ -1,27 +1,17 @@
-import numpy as np
-import math, time, Algorithms.Heap
+import math, time
 import Algorithms.Formulas as Formulas
-import Utilities.Constants as Constants
 from Algorithms.Search import Search
 
 class WeightedAStar(Search):
 	def __init__(self, grid, start, goal, heuristic, weight):
 		super().__init__(grid, start, goal)
-		self.time = 0
-		self.fringe = Algorithms.Heap.PriorityQueue()
 		self.weight = weight
 		self.Heuristic = heuristic
-
-		# 2D array of booleans to know which cell is in the fringe
-		self.openList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
 
 	# Start the algoirthm. Searches for the best path based on the heuristic.
 	def search(self):
 		startTime = int(round(time.time() * 1000))	# Get when the algorithm started
-
-		# 2D array of booleans to know which cell has been visited
-		closedList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
 		# Set distance from start and set parent to itself. Push to the heap with heuristic as priority
 		self.start.G = 0
@@ -41,11 +31,11 @@ class WeightedAStar(Search):
 				return True
 
 			# Add it to visited list
-			closedList[s.X, s.Y] = True
+			self.closedList[s.X, s.Y] = True
 
 			# Loop for all neighbors around the popped cell ('s') and check if already visited
 			for sprime in Formulas.Successors(s, self.grid):
-				if(closedList[sprime.X, sprime.Y] == False):
+				if(self.closedList[sprime.X, sprime.Y] == False):
 					if(self.openList[sprime.X, sprime.Y] == False):		# ** MAY NOT NEED THESE LINES **
 						sprime.G = math.inf							# We set the default values when
 						sprime.Parent = None						# we first create the cells.
@@ -58,12 +48,12 @@ class WeightedAStar(Search):
 
 	# Update a cell's G value and its parent
 	def updateVertex(self, s, sprime):
-		# Get the cost to traverse
-		cost = Formulas.PathCost(s, sprime)	
+		# Get the cost to traverse + distance to root
+		cost = s.G + Formulas.PathCost(s, sprime)	
 
 		# Check if its admissible
-		if(s.G + cost < sprime.G):
-			sprime.G = s.G + cost 	# Update the distance from start
+		if(cost < sprime.G):
+			sprime.G = cost 		# Update the distance from start
 			sprime.Parent = s 		# Set the parent to previous cell
 
 			# Remove it from fringe as it has been updated
