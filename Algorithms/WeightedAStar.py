@@ -8,7 +8,6 @@ class WeightedAStar(Search):
 		self.weight = weight
 		self.Heuristic = heuristic
 
-
 	# Start the algoirthm. Searches for the best path based on the heuristic.
 	def search(self):
 		startTime = int(round(time.time() * 1000))	# Get when the algorithm started
@@ -63,4 +62,4 @@ class WeightedAStar(Search):
 
 			# Push the updated cell in
 			self.openList[sprime.X, sprime.Y] = True
-			self.fringe.push(sprime, sprime.G + self.Heuristic(sprime, self.goal, self.grid))
+			self.fringe.push(sprime, sprime.G + self.weight * self.Heuristic(sprime, self.goal, self.grid))

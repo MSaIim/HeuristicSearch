@@ -82,7 +82,10 @@ class HeuristicSelector(Frame):
 		# Check if the weight is good
 		try:
 			self.weight = float(self.weightEntry.get())
-			self.close()
+			if(self.weight > 0):
+				self.close()
+			else:
+				messagebox.showinfo("Weight Error", "Please enter a numeric value > 1 for the weight.")
 		except:
 			messagebox.showinfo("Weight Error", "Please enter a numeric value > 1 for the weight.")
 
