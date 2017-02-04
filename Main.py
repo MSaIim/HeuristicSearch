@@ -3,6 +3,7 @@ import Algorithms.Formulas as Formulas
 import Utilities.Constants as Constants
 from tkinter import messagebox
 from Grid.Grid import Grid
+from Utilities.Forms import HeuristicSelector
 from Utilities.Button import Button
 from Algorithms.AStar import AStar
 from Algorithms.WeightedAStar import WeightedAStar
@@ -19,7 +20,7 @@ class GUI(object):
 
 		# For algorithms
 		self.time = 0
-		self.heuristic = Formulas.ManhattanDistance
+		self.heuForm = HeuristicSelector()
 
 		# Set the screen size, position, title, and icon
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -122,7 +123,9 @@ class GUI(object):
 
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
-				self.heuristic = Formulas.ManhattanDistance
+				# Ask for heuristic and weight
+				self.heuForm.open()
+
 				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 2) as weightedAStar:
 					self.grid.resetAlgoCells()
 					found = weightedAStar.search()
@@ -189,7 +192,7 @@ class GUI(object):
 	# Setup the static elements
 	def setup_static(self):
 		# Reset info box
-		self.heuristic = Formulas.NoHeuristic
+		self.heuristic = Formulas.ManhattanDistance
 		self.write_info(self.grid.startLocation.X, self.grid.startLocation.Y)
 
 		# Buttons (text, text_color, length, height, x_pos, y_pos, btn_color, hover_color)
