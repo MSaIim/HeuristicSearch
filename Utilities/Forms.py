@@ -11,10 +11,9 @@ class HeuristicSelector(Frame):
 		self.root = Tk()
 		Frame.__init__(self, self.root)
 
-	def open(self):
 		# Window properties
 		self.root.title("Heuristic Selector")
-		self.center_window(400, 200)
+		self.center_window(400, 180)
 		self.root.resizable(width=False, height=False)
 		self.pack(fill=BOTH, expand=False)
 
@@ -46,7 +45,7 @@ class HeuristicSelector(Frame):
 		# Button row
 		buttonRow = Frame(self)
 		buttonRow.pack(fill=X)
-		cancelButton = Button(buttonRow, text="Cancel", command=self.cancel)
+		cancelButton = Button(buttonRow, text="Cancel", command=self.close)
 		cancelButton.pack(side=RIGHT, padx=(0, 40), pady=10)
 		selectButton = Button(buttonRow, text="Select", command=self.select)
 		selectButton.pack(side=RIGHT)
@@ -79,17 +78,10 @@ class HeuristicSelector(Frame):
 			self.heuristic = Formulas.EuclideanDistanceSquared
 
 		self.weight = int(self.weightEntry.get())
-		self.root.destroy()
+		self.close()
+
 
 	# Close the window
-	def cancel(self):
+	def close(self):
+		self.root.quit()
 		self.root.destroy()
-
-	# # For use with the "as" statement in the "with" clause
-	# def __enter__(self):
-	# 	return self
-
-	# # What to do after "with" statement is done
-	# def __exit__(self, *err):
-	# 	self.cancel()
-	# 	del self

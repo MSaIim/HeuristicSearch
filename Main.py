@@ -20,7 +20,6 @@ class GUI(object):
 
 		# For algorithms
 		self.time = 0
-		self.heuForm = HeuristicSelector()
 
 		# Set the screen size, position, title, and icon
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -124,9 +123,12 @@ class GUI(object):
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
 				# Ask for heuristic and weight
-				self.heuForm.open()
+				heuForm = HeuristicSelector()
+				weight = heuForm.weight
+				self.heuristic = heuForm.heuristic
 
-				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, 2) as weightedAStar:
+				# Run with the given weight and heuristic
+				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, weight) as weightedAStar:
 					self.grid.resetAlgoCells()
 					found = weightedAStar.search()
 					if(found):
@@ -201,7 +203,7 @@ class GUI(object):
 		self.loadButton = Button("Load Map", Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Load button
 		self.astarButton = Button("   AStar   ", Constants.WHITE, 180, 40, 1055, 295, Constants.LIGHT_BLUE, Constants.DARK_BLUE)				# AStar button
 		self.weightedAStarButton = Button("Weighted A*", Constants.WHITE, 180, 40, 1055, 345, Constants.LIGHT_BLUE, Constants.DARK_BLUE)		# Weighted A* button
-		self.uniformCostButton = Button("Uniform Cost", Constants.WHITE, 180, 40, 1055, 395, Constants.LIGHT_BLUE, Constants.DARK_BLUE)		# Unifor Cost button
+		self.uniformCostButton = Button("Uniform Cost", Constants.WHITE, 180, 40, 1055, 395, Constants.LIGHT_BLUE, Constants.DARK_BLUE)			# Uniform Cost button
 
 		# Add buttons to list
 		buttonAppend = self.buttons.append
