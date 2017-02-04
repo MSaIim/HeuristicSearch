@@ -1,4 +1,4 @@
-import math
+import math, pygame
 from enum import Enum
 from functools import total_ordering
 import Utilities.Constants as Constants
@@ -9,6 +9,7 @@ class Type(Enum):
 	HARD = 2
 	BLOCKED = 3
 
+
 # Enum class to know direction of the points
 class Direction(Enum):
 	NONE = 1
@@ -16,43 +17,6 @@ class Direction(Enum):
 	DOWN = 3
 	LEFT = 4
 	RIGHT = 5
-
-
-# The individual Cell
-class Cell(object):
-	def __init__(self, x, y):
-		self.isHighway = False
-		self.isStart = False
-		self.isGoal = False
-		self.type = Type.REGULAR
-
-		# For algorithms
-		self.X = x
-		self.Y = y
-		self.G = math.inf
-		self.Parent = None
-		self.isPath = False
-
-	# Used for tie breakers inside the heap. Checks which one is the larger G value
-	def __lt__(self, other):
-		return self.G > other.G
-
-	# Equals method for use with lists (in, not in)
-	def __eq__(self, other):
-		return self.X == other.X and self.Y == other.Y
-
-	# Python's toString() method
-	def __str__(self):
-		if self.type == Type.BLOCKED:
-			return "0"
-		elif self.type == Type.REGULAR and self.isHighway:
-			return "a"
-		elif self.type == Type.HARD and self.isHighway:
-			return "b"
-		elif self.type == Type.REGULAR:
-			return "1"
-		elif self.type == Type.HARD:
-			return "2"
 
 
 # Point class to hold coordinates
@@ -81,3 +45,91 @@ class Point(object):
 	# Python's toString() method
 	def __str__(self):
 		return "".join(["(", str(self.x), ",", str(self.y), ")"])
+
+
+# The individual Cell
+class Cell(object):
+	def __init__(self, x, y, rectPos=None):
+		self.isHighway = False
+		self.isStart = False
+		self.isGoal = False
+		self.type = Type.REGULAR
+		self.rectPos = rectPos
+
+		if(self.rectPos is not None):
+			self.rect = pygame.Rect(self.rectPos[0]+20, self.rectPos[1]+20, Constants.WIDTH+1, Constants.HEIGHT+1)
+
+		# For algorithms
+		self.X = x
+		self.Y = y
+		self.G = math.inf
+		self.Parent = None
+		self.isPath = False
+
+	# Reset the cell
+	def reset(self, x, y):
+		self.isHighway = False
+		self.isStart = False
+		self.isGoal = False
+		self.Type = Type.REGULAR
+		self.X = x
+		self.Y = y
+		self.G = math.inf
+		self.Parent = None
+		self.isPath = False
+
+	# Reset the algorithm values
+	def resetAlgoCell(self):
+		self.G = math.inf
+		self.Parent = None
+		self.isPath = False
+
+
+	# Used for tie breakers inside the heap. Checks which one is the larger G value
+	def __lt__(self, other):
+		return self.G > other.G
+
+	# Equals method for use with lists (in, not in)
+	def __eq__(self, other):
+		return self.X == other.X and self.Y == other.Y
+
+	# Python's toString() method
+	def __str__(self):
+		if self.type == Type.BLOCKED:
+			return "0"
+		elif self.type == Type.REGULAR and self.isHighway:
+			return "a"
+		elif self.type == Type.HARD and self.isHighway:
+			return "b"
+		elif self.type == Type.REGULAR:
+			return "1"
+		elif self.type == Type.HARD:
+			return "2"
+
+	# Draw for pygame
+	def draw(self, surface, mouse):
+		color = Constants.GREEN
+
+		if self.type == Type.HARD: 		
+			color = Constants.GREY				# Hard to traverse
+		if self.type == Type.BLOCKED:
+			color = Constants.BLACK				# Blocked path
+		if self.isHighway and self.type == Type.HARD:
+			color = Constants.DARK_BLUE			# Highway and hard to traverse
+		if self.isHighway and self.type == Type.REGULAR:
+			color = Constants.LIGHT_BLUE		# Highway and regular
+		if self.isStart == True:			
+			color = Constants.WHITE				# Start vertex
+		if self.isGoal == True:			
+			color = Constants.RED				# Goal vertex
+
+		if self.isPath == True:
+			color = Constants.YELLOW
+			if self.type == Type.HARD:
+				color = Constants.DARK_YELLOW
+
+		# Draw the cell
+		#if(self.rect.collidepoint(mouse)):
+		#	pygame.draw.rect(surface, Constants.RED, self.rectPos, 1)
+		#else:
+		pygame.draw.rect(surface, color, self.rectPos)

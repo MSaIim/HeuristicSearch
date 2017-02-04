@@ -1,5 +1,6 @@
 import numpy as np
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import filedialog
 from random import randrange, uniform
 import Utilities.Constants as Constants
@@ -13,7 +14,12 @@ class Grid(object):
 
 	def __init__(self):
 		# 2D array of cells
-		self.cells = np.asmatrix([[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
+		full_width, full_height = Constants.MARGIN + Constants.WIDTH, Constants.MARGIN + Constants.HEIGHT
+
+		self.cells = np.asmatrix(
+			[[Cell(x, y, [full_width * y + Constants.MARGIN, full_height * x + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT]) 
+			for y in range(Constants.COLUMNS)] 
+			for x in range(Constants.ROWS)])
 
 		# Save the start, goal, and the eight hard to traverse centers
 		self.startLocation = Cell(-1, -1)
@@ -28,6 +34,7 @@ class Grid(object):
 
 		# For algorithms
 		self.previousPath = []
+		self.closedList = []
 
 
 	# Choose random centers and mark hard to traverse cells around a 31x31 area
@@ -275,18 +282,16 @@ class Grid(object):
 	# Sets the boolean values at the positions inside the list
 	def setPath(self, path):
 		if(path != None):
-			# Undo previous path
-			for index in range(len(self.previousPath)):
-				if(self.previousPath[index] != self.startLocation and self.previousPath[index] != self.goalLocation):
-					self.cells[self.previousPath[index].X, self.previousPath[index].Y].isPath = False
-
-			# Set new path
 			for index in range(len(path)):
 				if(path[index] != self.startLocation and path[index] != self.goalLocation):
 					self.cells[path[index].X, path[index].Y].isPath = True
 
-			# Set the previous path
-			self.previousPath = path
+
+	# Reset all the cells so algorithms can work
+	def resetAlgoCells(self):
+		for x in range(Constants.ROWS):
+			for y in range(Constants.COLUMNS):
+				self.cells[x, y].resetAlgoCell()
 
 
 	# /*\ =======================================================================
@@ -322,6 +327,8 @@ class Grid(object):
 
 			f.close()
 
+		# Show message box
+		messagebox.showinfo("Map Save", "Map has been saved.")
 		return True
 
 
@@ -346,21 +353,21 @@ class Grid(object):
 			for row in range(Constants.ROWS):
 				for col in range(Constants.COLUMNS):
 					if(characters[row][col] == '0'):
-						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].reset(row, col)
 						self.cells[row, col].type = Type.BLOCKED
 					elif(characters[row][col] == 'a'):
-						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].reset(row, col)
 						self.cells[row, col].type = Type.REGULAR
 						self.cells[row, col].isHighway = True
 					elif(characters[row][col] == 'b'):
-						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].reset(row, col)
 						self.cells[row, col].type = Type.HARD
 						self.cells[row, col].isHighway = True
 					elif(characters[row][col] == '1'):
-						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].reset(row, col)
 						self.cells[row, col].type = Type.REGULAR
 					elif(characters[row][col] == '2'):
-						self.cells[row, col] = Cell(row, col)
+						self.cells[row, col].reset(row, col)
 						self.cells[row, col].type = Type.HARD
 
 			a, b = eval(start)
@@ -372,3 +379,13 @@ class Grid(object):
 			self.startLocation = self.cells[a, b]
 			self.goalLocation = self.cells[c, d]
 			f.close()
+
+
+	# /*\ =======================================================================
+	# |*|	PYGAME DRAWING
+	# |*|		- draw() Calls each cell's draw function
+	# \*/ =======================================================================
+	def draw(self, surface, mouse):
+		for x in range(Constants.ROWS):
+			for y in range(Constants.COLUMNS):
+				self.cells[x, y].draw(surface, mouse)

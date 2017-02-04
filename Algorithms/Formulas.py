@@ -9,6 +9,9 @@ from Grid.Cell import Type
 # |*|		- Euclidean Distance
 # |*|		- Euclidean Distance Sqaured
 # \*/ =======================================================================
+def NoHeuristic(s, goal, grid):
+	return 0
+
 def AStarHeuristic(s, goal, grid):
 	a = math.sqrt(2)
 	min_XY = min(abs(s.X - goal.X), abs(s.Y - goal.Y))
