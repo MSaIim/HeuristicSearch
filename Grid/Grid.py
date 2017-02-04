@@ -32,10 +32,6 @@ class Grid(object):
 		self.setBlocked()
 		self.setStartAndGoal()
 
-		# For algorithms
-		self.previousPath = []
-		self.closedList = []
-
 
 	# Choose random centers and mark hard to traverse cells around a 31x31 area
 	def setHardToTraverse(self):

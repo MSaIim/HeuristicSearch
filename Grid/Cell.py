@@ -56,8 +56,8 @@ class Cell(object):
 		self.type = Type.REGULAR
 		self.rectPos = rectPos
 
-		if(self.rectPos is not None):
-			self.rect = pygame.Rect(self.rectPos[0]+20, self.rectPos[1]+20, Constants.WIDTH+1, Constants.HEIGHT+1)
+		#if(self.rectPos is not None):
+		#	self.rect = pygame.Rect(self.rectPos[0]+20, self.rectPos[1]+20, Constants.WIDTH+1, Constants.HEIGHT+1)
 
 		# For algorithms
 		self.X = x
@@ -83,7 +83,6 @@ class Cell(object):
 		self.G = math.inf
 		self.Parent = None
 		self.isPath = False
-
 
 	# Used for tie breakers inside the heap. Checks which one is the larger G value
 	def __lt__(self, other):
@@ -123,13 +122,15 @@ class Cell(object):
 		if self.isGoal == True:			
 			color = Constants.RED				# Goal vertex
 
-		if self.isPath == True:
+		if self.isPath == True:					# Part of path
 			color = Constants.YELLOW
 			if self.type == Type.HARD:
 				color = Constants.DARK_YELLOW
 
-		# Draw the cell
-		#if(self.rect.collidepoint(mouse)):
+
+		# For mouse hover (not accurate)
+		# if(self.rect.collidepoint(mouse)):
 		#	pygame.draw.rect(surface, Constants.RED, self.rectPos, 1)
-		#else:
+
+		# Draw the cell
 		pygame.draw.rect(surface, color, self.rectPos)
