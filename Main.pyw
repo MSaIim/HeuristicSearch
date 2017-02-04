@@ -125,19 +125,20 @@ class GUI(object):
 				# Ask for heuristic and weight
 				heuForm = HeuristicSelector()
 				weight = heuForm.weight
-				self.heuristic = heuForm.heuristic
 
 				# Run with the given weight and heuristic
-				with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, weight) as weightedAStar:
-					self.grid.resetAlgoCells()
-					found = weightedAStar.search()
-					if(found):
-						self.grid.setPath(weightedAStar.getPath())
-					else:
-						messagebox.showinfo("Weighted AStar Results", "No path could be found to the goal.")
+				if(weight > 0):
+					self.heuristic = heuForm.heuristic
+					with WeightedAStar(self.grid.cells, self.grid.startLocation, self.grid.goalLocation, self.heuristic, weight) as weightedAStar:
+						self.grid.resetAlgoCells()
+						found = weightedAStar.search()
+						if(found):
+							self.grid.setPath(weightedAStar.getPath())
+						else:
+							messagebox.showinfo("Weighted AStar Results", "No path could be found to the goal.")
 
-					self.time = weightedAStar.time
-					self.write_info(self.cell.X, self.cell.Y)
+						self.time = weightedAStar.time
+						self.write_info(self.cell.X, self.cell.Y)
 
 			# UNIFORM COST BUTTON CLICKED
 			elif self.uniformCostButton.pressed(pos):

@@ -1,6 +1,6 @@
 import Algorithms.Formulas as Formulas
-from tkinter import messagebox, Tk, Text, TOP, BOTH, X, N, LEFT, RIGHT
-from tkinter.ttk import Frame, Combobox, Button, Label, Entry
+from tkinter import Tk, BOTH, X, LEFT, RIGHT, Spinbox, messagebox
+from tkinter.ttk import Frame, Combobox, Button, Label
 
 class HeuristicSelector(Frame):
 	# Reference var of window and list of heuristics
@@ -9,6 +9,8 @@ class HeuristicSelector(Frame):
 	# Construct the window
 	def __init__(self):
 		self.root = Tk()
+		self.weight = 0
+		self.root.protocol("WM_DELETE_WINDOW", self.close)
 		Frame.__init__(self, self.root)
 
 		# Window properties
@@ -39,7 +41,7 @@ class HeuristicSelector(Frame):
 		weightRow.pack(fill=X)
 		heuristicLabel = Label(weightRow, text="Weight:")
 		heuristicLabel.pack(side=LEFT, padx=(30, 20), pady=5)
-		self.weightEntry = Entry(weightRow)
+		self.weightEntry = Spinbox(weightRow, from_=1, to=9999)
 		self.weightEntry.pack(fill=X, padx=(4, 40), expand=True)
 
 		# Button row
@@ -77,8 +79,12 @@ class HeuristicSelector(Frame):
 		elif(self.combobox.get() == "Euclidean Distance Squared"):
 			self.heuristic = Formulas.EuclideanDistanceSquared
 
-		self.weight = int(self.weightEntry.get())
-		self.close()
+		# Check if the weight is good
+		try:
+			self.weight = float(self.weightEntry.get())
+			self.close()
+		except:
+			messagebox.showinfo("Weight Error", "Please enter a numeric value > 1 for the weight.")
 
 
 	# Close the window
