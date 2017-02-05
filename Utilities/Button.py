@@ -1,13 +1,13 @@
 import pygame
 
 class Button(object):
-	def __init__(self, text, text_color, length, height, x_pos, y_pos, btn_color, hover_color):
+	def __init__(self, text, text_size, text_color, length, height, x_pos, y_pos, btn_color, hover_color):
 		# Setup the button
 		self.btnSurface = pygame.Surface((length, height))
 		self.rect = pygame.Rect(x_pos, y_pos, length, height)
 
 		# Setup font
-		btnfont = pygame.font.SysFont("Calibri", int(length//len(text)), True)
+		btnfont = pygame.font.SysFont("Calibri", int(length//text_size), True)
 		self.text = btnfont.render(text, 1, text_color)
 		self.x_offset = (x_pos+length/2) - self.text.get_width()/2
 		self.y_offset = (y_pos+height/2) - self.text.get_height()/2

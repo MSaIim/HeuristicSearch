@@ -1,16 +1,18 @@
-import tkinter.font as tkFont
 import Algorithms.Formulas as Formulas
 from Utilities.Form import Form
-from Grid.Cell import Point
-from tkinter import Tk, X, Y, W, LEFT, RIGHT, Spinbox, messagebox, IntVar
-from tkinter.ttk import Frame, Button, Label, Radiobutton, Combobox
+from tkinter import Tk, X, LEFT, RIGHT, Spinbox, messagebox
+from tkinter.ttk import Frame, Button, Label, Combobox
 
-# Opens up a form to select a start and goal pair
+
+# /*\ =======================================================================
+# |*|	START-GOAL PAIR SELECTOR
+# |*|		- Opens a window with a dropdown list with different
+# |*|		  start and goal locations
+# \*/ =======================================================================
 class StartGoalSelector(Form):
 	def __init__(self, startList, goalList):
 		super().__init__("Start-Goal Pair Selector", 320, 160)
 		self.startList = startList
-		self.goalList = goalList
 		self.index = -1
 
 		# Information row
@@ -44,7 +46,7 @@ class StartGoalSelector(Form):
 		self.root.mainloop()
 
 
-	# Get the values from the combobox and the text entry when user presses "Select"
+	# Get the value from the combobox and return the index
 	def select(self):
 		for i in range(len(self.startList)):
 			if(self.combobox.get() == self.pairs[i]):
@@ -54,8 +56,11 @@ class StartGoalSelector(Form):
 		self.close()
 
 
-
-# Opens up a form to select a heuristic and weight
+# /*\ =======================================================================
+# |*|	HEURISTIC SELECTOR
+# |*|		- Opens a window with a dropdown list and a number entry text box
+# |*|		  box. Can choose which heuristic the algorithm will run.
+# \*/ =======================================================================
 class HeuristicSelector(Form):
 	# Reference var of window and list of heuristics
 	heuristics = ['AStar Default', 'Manhattan Distance', 'Euclidean Distance', 'Chebyshev Distance', 'Diagonal Distance']
@@ -121,6 +126,6 @@ class HeuristicSelector(Form):
 			if(self.weight > 0):
 				self.close()
 			else:
-				messagebox.showinfo("Weight Error", "Please enter a numeric value > 1 for the weight.")
+				messagebox.showinfo("Weight Error", "Please enter a numeric value > 0 for the weight.")
 		except:
-			messagebox.showinfo("Weight Error", "Please enter a numeric value > 1 for the weight.")
+			messagebox.showinfo("Weight Error", "Please enter a numeric value > 0 for the weight.")

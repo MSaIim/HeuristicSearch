@@ -12,10 +12,8 @@ from Algorithms.UniformCost import UniformCost
 
 class GUI(object):
 	def __init__(self):
-		# Setup the grid
+		# Setup the screen
 		self.grid = Grid()
-
-		# For ui elements
 		self.buttons = []
 
 		# For algorithms
@@ -112,6 +110,8 @@ class GUI(object):
 				if(sgForm.index >= 0):
 					self.grid.resetAlgoCells()
 					self.grid.setNewStartGoalPair(sgForm.index)
+					self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
+				del sgForm
 
 			# ASTAR BUTTON CLICKED
 			elif self.astarButton.pressed(pos):
@@ -125,7 +125,7 @@ class GUI(object):
 						messagebox.showinfo("AStar Results", "No path could be found to the goal.")
 
 					self.time = astar.time
-					self.write_info(self.cell.X, self.cell.Y)
+					self.write_info(self.clickedCell.X, self.clickedCell.Y)
 
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
@@ -145,7 +145,10 @@ class GUI(object):
 							messagebox.showinfo("Weighted AStar Results", "No path could be found to the goal.")
 
 						self.time = weightedAStar.time
-						self.write_info(self.cell.X, self.cell.Y)
+						self.write_info(self.clickedCell.X, self.clickedCell.Y)
+
+				# Remove from memory
+				del heuForm
 
 			# UNIFORM COST BUTTON CLICKED
 			elif self.uniformCostButton.pressed(pos):
@@ -159,7 +162,7 @@ class GUI(object):
 						messagebox.showinfo("Uniform Cost Results", "No path could be found to the goal.")
 
 					self.time = uniformCost.time
-					self.write_info(self.cell.X, self.cell.Y)
+					self.write_info(self.clickedCell.X, self.clickedCell.Y)
 					
 			# Convert x/y screen coordinates to grid coordinates				 
 			column = pos[0] // (Constants.WIDTH + Constants.MARGIN) - 3
@@ -184,9 +187,10 @@ class GUI(object):
 		# Draw boxes (surface, color, rectangle[x, y, width, height], width)
 		pygame.draw.rect(self.screen, Constants.BLACK, [18, 18, 965, 725], 1)				# Border around grid
 		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 28, 230, 200], 1)			# Information box
-		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 260, 230, 200], 1)		# Algoirthms box
+		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 260, 230, 280], 1)		# Algoirthms box
 		pygame.draw.rect(self.screen, Constants.WHITE, [1080, 10, 125, 100])				# White box (information)
 		pygame.draw.rect(self.screen, Constants.WHITE, [1090, 230, 115, 100])				# White box (algorithms)
+		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1055, 455, 180, 1], 1)
 
 		# Draw text (surface, text, text_color, text_size, x, y)
 		self.write_text("Information", Constants.BLACK, 20, 1085, 20)
@@ -206,13 +210,13 @@ class GUI(object):
 		self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
 
 		# Buttons (text, text_color, length, height, x_pos, y_pos, btn_color, hover_color)
-		self.reloadButton = Button("Regenerate Map", Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)					# Reload button
-		self.saveButton = Button("Save Map", Constants.WHITE, 110, 40, 1150, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Save button
-		self.loadButton = Button("Load Map", Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Load button
-		self.astarButton = Button("   AStar   ", Constants.WHITE, 180, 40, 1055, 295, Constants.LIGHT_BLUE, Constants.DARK_BLUE)				# AStar button
-		self.weightedAStarButton = Button("Weighted A*", Constants.WHITE, 180, 40, 1055, 345, Constants.LIGHT_BLUE, Constants.DARK_BLUE)		# Weighted A* button
-		self.uniformCostButton = Button("Uniform Cost", Constants.WHITE, 180, 40, 1055, 395, Constants.LIGHT_BLUE, Constants.DARK_BLUE)			# Uniform Cost button
-		self.startGoalButton = Button("Start-Goal Pair", Constants.WHITE, 180, 40, 1055, 450, Constants.PINK, Constants.DARK_PINK)				# Start-Goal Pair button
+		self.reloadButton = Button("Regenerate Map", 14, Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)					# Reload button
+		self.saveButton = Button("Save Map", 7, Constants.WHITE, 110, 40, 1150, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Save button
+		self.loadButton = Button("Load Map", 7, Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Load button
+		self.astarButton = Button("AStar", 11, Constants.WHITE, 180, 40, 1055, 295, Constants.LIGHT_BLUE, Constants.DARK_BLUE)				# AStar button
+		self.weightedAStarButton = Button("Weighted A*", 11, Constants.WHITE, 180, 40, 1055, 345, Constants.LIGHT_BLUE, Constants.DARK_BLUE)		# Weighted A* button
+		self.uniformCostButton = Button("Uniform Cost", 11, Constants.WHITE, 180, 40, 1055, 395, Constants.LIGHT_BLUE, Constants.DARK_BLUE)			# Uniform Cost button
+		self.startGoalButton = Button("Start-Goal Pair", 12, Constants.WHITE, 180, 40, 1055, 475, Constants.PINK, Constants.DARK_PINK)				# Start-Goal Pair button
 
 		# Add buttons to list
 		buttonAppend = self.buttons.append
@@ -246,14 +250,14 @@ class GUI(object):
 		self.setup_dynamic()
 		
 		# Update the cell info
-		self.cell = self.grid.cells[row, col]
-		hn = self.heuristic(self.cell, self.grid.currentGoal)
-		fn = self.cell.G + hn
-		gn = self.cell.G
+		self.clickedCell = self.grid.cells[row, col]
+		hn = self.heuristic(self.clickedCell, self.grid.currentGoal)
+		fn = self.clickedCell.G + hn
+		gn = self.clickedCell.G
 
 		# Draw text (surface, text, text_color, text_size, x, y)
-		if(self.cell is not None):
-			self.write_text("".join(["(", str(self.cell.X), ", ", str(self.cell.Y), ")"]), Constants.BLACK, 16, 1130, 65)
+		if(self.clickedCell is not None):
+			self.write_text("".join(["(", str(self.clickedCell.X), ", ", str(self.clickedCell.Y), ")"]), Constants.BLACK, 16, 1130, 65)
 			self.write_text(f'{fn:.6f}', Constants.BLACK, 16, 1130, 97)
 			self.write_text(f'{gn:.6f}', Constants.BLACK, 16, 1130, 127)
 			self.write_text(f'{hn:.2f}', Constants.BLACK, 16, 1130, 157)

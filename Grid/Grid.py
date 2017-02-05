@@ -389,8 +389,8 @@ class Grid(object):
 			x2, y2 = int(c), int(d)
 			self.cells[a, b].isStart = True
 			self.cells[c, d].isGoal = True
-			self.startLocations[0] = self.cells[a, b]
-			self.goalLocations[0] = self.cells[c, d]
+			self.currentStart = self.cells[a, b]
+			self.currentGoal = self.cells[c, d]
 			f.close()
 
 

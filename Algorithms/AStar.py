@@ -5,7 +5,7 @@ from Algorithms.Search import Search
 class AStar(Search):
 	def __init__(self, grid, start, goal):
 		super().__init__(grid, start, goal)
-
+		self.sqrtTwo = math.sqrt(2)
 		
 	# Start the algoirthm. Searches for the best path based on the heuristic.
 	def search(self):
@@ -34,9 +34,9 @@ class AStar(Search):
 			# Loop for all neighbors around the popped cell ('s') and check if already visited
 			for sprime in Formulas.Successors(s, self.grid):
 				if(self.closedList[sprime.X, sprime.Y] == False):
-					if(self.openList[sprime.X, sprime.Y] == False):			# ** MAY NOT NEED THESE LINES **
-						sprime.G = math.inf									# We set the default values when
-						sprime.Parent = None								# we first create the cells.
+					if(self.openList[sprime.X, sprime.Y] == False):
+						sprime.G = math.inf
+						sprime.Parent = None
 
 					self.updateVertex(s, sprime)
 
@@ -52,7 +52,7 @@ class AStar(Search):
 
 		# Check if its admissible
 		if(cost < sprime.G):
-			sprime.G = cost 	# Update the distance from start
+			sprime.G = cost 		# Update the distance from start
 			sprime.Parent = s 		# Set the parent to previous cell
 
 			# Remove it from fringe as it has been updated
@@ -66,8 +66,7 @@ class AStar(Search):
 
 	# Heuristic to guide the A* along the optimal path
 	def Heuristic(self, s):
-		a = math.sqrt(2)
 		min_XY = min(abs(s.X - self.goal.X), abs(s.Y - self.goal.Y))
 		max_XY = max(abs(s.X - self.goal.X), abs(s.Y - self.goal.Y))
 
-		return (a * min_XY) + max_XY - min_XY
+		return (self.sqrtTwo * min_XY) + max_XY - min_XY

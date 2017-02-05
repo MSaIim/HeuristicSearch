@@ -35,9 +35,9 @@ class WeightedAStar(Search):
 			# Loop for all neighbors around the popped cell ('s') and check if already visited
 			for sprime in Formulas.Successors(s, self.grid):
 				if(self.closedList[sprime.X, sprime.Y] == False):
-					if(self.openList[sprime.X, sprime.Y] == False):			# ** MAY NOT NEED THESE LINES **
-						sprime.G = math.inf									# We set the default values when
-						sprime.Parent = None								# we first create the cells.
+					if(self.openList[sprime.X, sprime.Y] == False):
+						sprime.G = math.inf
+						sprime.Parent = None
 
 					self.updateVertex(s, sprime)
 

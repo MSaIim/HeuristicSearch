@@ -3,14 +3,20 @@ from enum import Enum
 from functools import total_ordering
 import Utilities.Constants as Constants
 
-# Enum class to know the Cell's type
+# /*\ =======================================================================
+# |*|	TYPE ENUM CLASS
+# |*|		- Holds the types for an individual cell
+# \*/ =======================================================================
 class Type(Enum):
 	REGULAR = 1
 	HARD = 2
 	BLOCKED = 3
 
 
-# Enum class to know direction of the points
+# /*\ =======================================================================
+# |*|	DIRECTION ENUM CLASS
+# |*|		- Used to build highways
+# \*/ =======================================================================
 class Direction(Enum):
 	NONE = 1
 	UP = 2
@@ -19,7 +25,11 @@ class Direction(Enum):
 	RIGHT = 5
 
 
-# Point class to hold coordinates
+# /*\ =======================================================================
+# |*|	POINT CLASS
+# |*|		- Used to build the grid
+# |*|		- Has helper functions to know a cell's location
+# \*/ =======================================================================
 class Point(object):
 	def __init__(self, x, y, direction = Direction.NONE):
 		self.x = x
@@ -47,7 +57,12 @@ class Point(object):
 		return "".join(["(", str(self.x), ",", str(self.y), ")"])
 
 
-# The individual Cell
+# /*\ =======================================================================
+# |*|	CELL CLASS
+# |*|		- Holds the details of a cell
+# |*|		- Holds the information that the algorithms use
+# |*|		- Used to color a cell through pygame's draw call
+# \*/ =======================================================================
 class Cell(object):
 	def __init__(self, x, y, rectPos=None):
 		self.isHighway = False
@@ -62,9 +77,6 @@ class Cell(object):
 		self.G = math.inf
 		self.Parent = None
 		self.isPath = False
-
-		#if(self.rectPos is not None):
-		#	self.rect = pygame.Rect(self.rectPos[0]+20, self.rectPos[1]+20, Constants.WIDTH+1, Constants.HEIGHT+1)
 
 	# Reset the cell
 	def reset(self, x, y):
@@ -127,10 +139,6 @@ class Cell(object):
 			if self.type == Type.HARD:
 				color = Constants.DARK_YELLOW
 
-
-		# For mouse hover (not accurate)
-		# if(self.rect.collidepoint(mouse)):
-		#	pygame.draw.rect(surface, Constants.RED, self.rectPos, 1)
 
 		# Draw the cell
 		pygame.draw.rect(surface, color, self.rectPos)
