@@ -299,16 +299,12 @@ class Grid(object):
 
 	# Set the start and goal
 	def setNewStartGoalPair(self, index):
-		for i in range(len(self.startLocations)):
-			self.cells[self.startLocations[i].X, self.startLocations[i].Y].isStart = False
-			self.cells[self.startLocations[i].X, self.startLocations[i].Y].isGoal = False
-
-			if(i == index):
-				self.cells[self.startLocations[i].X, self.startLocations[i].Y].isStart = True
-				self.cells[self.startLocations[i].X, self.startLocations[i].Y].isGoal = True
-				self.currentStart = self.cells[self.startLocations[i].X, self.startLocations[i].Y]
-				self.currentGoal = self.cells[self.startLocations[i].X, self.startLocations[i].Y]
-				break
+		self.cells[self.currentStart.X, self.currentStart.Y].isStart = False
+		self.cells[self.currentGoal.X, self.currentGoal.Y].isGoal = False
+		self.cells[self.startLocations[index].X, self.startLocations[index].Y].isStart = True
+		self.cells[self.goalLocations[index].X, self.goalLocations[index].Y].isGoal = True
+		self.currentStart = self.cells[self.startLocations[index].X, self.startLocations[index].Y]
+		self.currentGoal = self.cells[self.goalLocations[index].X, self.goalLocations[index].Y]
 
 
 	# /*\ =======================================================================

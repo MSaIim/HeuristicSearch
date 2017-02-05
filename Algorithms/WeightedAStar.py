@@ -15,7 +15,7 @@ class WeightedAStar(Search):
 		# Set distance from start and set parent to itself. Push to the heap with heuristic as priority
 		self.start.G = 0
 		self.start.Parent = self.start
-		self.fringe.push(self.start, self.start.G + self.weight * self.Heuristic(self.start, self.goal, self.grid))
+		self.fringe.push(self.start, self.start.G + self.weight * self.Heuristic(self.start, self.goal))
 
 		# Loop until goal is found or fringe is empty (no more nodes to expand)
 		while(self.fringe.isEmpty() == False):
@@ -62,4 +62,4 @@ class WeightedAStar(Search):
 
 			# Push the updated cell in
 			self.openList[sprime.X, sprime.Y] = True
-			self.fringe.push(sprime, sprime.G + self.weight * self.Heuristic(sprime, self.goal, self.grid))
+			self.fringe.push(sprime, sprime.G + self.weight * self.Heuristic(sprime, self.goal))

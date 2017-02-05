@@ -3,7 +3,7 @@ import Algorithms.Formulas as Formulas
 import Utilities.Constants as Constants
 from tkinter import messagebox
 from Grid.Grid import Grid
-from Utilities.Forms import HeuristicSelector, StartGoalSelector
+from Utilities.Selectors import HeuristicSelector, StartGoalSelector
 from Utilities.Button import Button
 from Algorithms.AStar import AStar
 from Algorithms.WeightedAStar import WeightedAStar
@@ -95,24 +95,28 @@ class GUI(object):
 			if self.reloadButton.pressed(pos):
 				del self.grid
 				self.grid = Grid()
-				self.write_info(self.grid.startLocations[0].X, self.grid.startLocations[0].Y)
+				self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
 
 			# LOAD BUTTON CLICKED
 			elif self.loadButton.pressed(pos):
 				self.grid.load()
-				self.write_info(self.grid.startLocations[0].X, self.grid.startLocations[0].Y)
+				self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
 
 			# SAVE BUTTON CLICKED
 			elif self.saveButton.pressed(pos):
 				self.grid.save()
 
+			# START-GOAL PAIR CLICKED
 			elif self.startGoalButton.pressed(pos):
 				sgForm = StartGoalSelector(self.grid.startLocations, self.grid.goalLocations)
+				if(sgForm.index >= 0):
+					self.grid.resetAlgoCells()
+					self.grid.setNewStartGoalPair(sgForm.index)
 
 			# ASTAR BUTTON CLICKED
 			elif self.astarButton.pressed(pos):
 				self.heuristic = Formulas.AStarHeuristic
-				with AStar(self.grid.cells, self.grid.startLocations[0], self.grid.goalLocations[0]) as astar:
+				with AStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal) as astar:
 					self.grid.resetAlgoCells()
 					found = astar.search()
 					if(found):
@@ -132,7 +136,7 @@ class GUI(object):
 				# Run with the given weight and heuristic
 				if(weight > 0):
 					self.heuristic = heuForm.heuristic
-					with WeightedAStar(self.grid.cells, self.grid.startLocations[0], self.grid.goalLocations[0], self.heuristic, weight) as weightedAStar:
+					with WeightedAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, self.heuristic, weight) as weightedAStar:
 						self.grid.resetAlgoCells()
 						found = weightedAStar.search()
 						if(found):
@@ -146,7 +150,7 @@ class GUI(object):
 			# UNIFORM COST BUTTON CLICKED
 			elif self.uniformCostButton.pressed(pos):
 				self.heuristic = Formulas.NoHeuristic
-				with UniformCost(self.grid.cells, self.grid.startLocations[0], self.grid.goalLocations[0]) as uniformCost:
+				with UniformCost(self.grid.cells, self.grid.currentStart, self.grid.currentGoal) as uniformCost:
 					self.grid.resetAlgoCells()
 					found = uniformCost.search()
 					if(found):
@@ -199,7 +203,7 @@ class GUI(object):
 	def setup_static(self):
 		# Reset info box
 		self.heuristic = Formulas.ManhattanDistance
-		self.write_info(self.grid.startLocations[0].X, self.grid.startLocations[0].Y)
+		self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
 
 		# Buttons (text, text_color, length, height, x_pos, y_pos, btn_color, hover_color)
 		self.reloadButton = Button("Regenerate Map", Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)					# Reload button
@@ -208,7 +212,7 @@ class GUI(object):
 		self.astarButton = Button("   AStar   ", Constants.WHITE, 180, 40, 1055, 295, Constants.LIGHT_BLUE, Constants.DARK_BLUE)				# AStar button
 		self.weightedAStarButton = Button("Weighted A*", Constants.WHITE, 180, 40, 1055, 345, Constants.LIGHT_BLUE, Constants.DARK_BLUE)		# Weighted A* button
 		self.uniformCostButton = Button("Uniform Cost", Constants.WHITE, 180, 40, 1055, 395, Constants.LIGHT_BLUE, Constants.DARK_BLUE)			# Uniform Cost button
-		self.startGoalButton = Button("Start-Goal Pair", Constants.WHITE, 180, 40, 1055, 450, Constants.PINK, Constants.DARK_PINK)		# Uniform Cost button
+		self.startGoalButton = Button("Start-Goal Pair", Constants.WHITE, 180, 40, 1055, 450, Constants.PINK, Constants.DARK_PINK)				# Start-Goal Pair button
 
 		# Add buttons to list
 		buttonAppend = self.buttons.append
@@ -243,7 +247,7 @@ class GUI(object):
 		
 		# Update the cell info
 		self.cell = self.grid.cells[row, col]
-		hn = self.heuristic(self.cell, self.grid.goalLocations[0], self.grid.cells)
+		hn = self.heuristic(self.cell, self.grid.currentGoal)
 		fn = self.cell.G + hn
 		gn = self.cell.G
 

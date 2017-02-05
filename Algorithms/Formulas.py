@@ -7,12 +7,13 @@ from Grid.Cell import Type
 # |*|		- Default for AStar
 # |*|		- Manhattan Distance
 # |*|		- Euclidean Distance
-# |*|		- Euclidean Distance Sqaured
+# |*|		- Chebyshev Distance
+# |*|		- Diagonal Distance
 # \*/ =======================================================================
-def NoHeuristic(s, goal, grid):
+def NoHeuristic(s, goal):
 	return 0
 
-def AStarHeuristic(s, goal, grid):
+def AStarHeuristic(s, goal):
 	a = math.sqrt(2)
 	min_XY = min(abs(s.X - goal.X), abs(s.Y - goal.Y))
 	max_XY = max(abs(s.X - goal.X), abs(s.Y - goal.Y))
@@ -20,43 +21,35 @@ def AStarHeuristic(s, goal, grid):
 	return (a * min_XY) + max_XY - min_XY
 
 # Optimized for the vertical and horizontal path
-def ManhattanDistance(s, goal, grid):
+def ManhattanDistance(s, goal):
 	dx = abs(s.X - goal.X)
 	dy = abs(s.Y - goal.Y)
-	cost = math.inf
 
-	for sprime in Successors(s, grid):
-		temp = PathCost(s, sprime)
-		if(temp < cost):
-			cost = temp
-
-	return cost * (dx + dy)
+	return 0.25 * (dx + dy)
 
 # Straight line distance
-def EuclideanDistance(s, goal, grid):
+def EuclideanDistance(s, goal):
 	dx = abs(s.X - goal.X)
 	dy = abs(s.Y - goal.Y)
-	cost = math.inf
 
-	for sprime in Successors(s, grid):
-		temp = PathCost(s, sprime)
-		if(temp < cost):
-			cost = temp
+	return 0.25 * math.sqrt(dx*dx + dy*dy)
 
-	return cost * math.sqrt(dx*dx + dy*dy)
-
-# Loses the triangle equality (ex: Distance from (0,0) to (2,0) is 4)
-def EuclideanDistanceSquared(s, goal, grid):
+# Max of values
+def ChebyshevDistance(s, goal):
 	dx = abs(s.X - goal.X)
 	dy = abs(s.Y - goal.Y)
-	cost = math.inf
 
-	for sprime in Successors(s, grid):
-		temp = PathCost(s, sprime)
-		if(temp < cost):
-			cost = temp
+	return max(dx, dy)
 
-	return cost * (dx*dx + dy*dy)
+# PRefer diagonal
+def DiagonalDistance(s, goal):
+	d_max = max(abs(s.X - goal.X), abs(s.Y - goal.Y))
+	d_min = min(abs(s.Y - goal.Y), abs(s.Y - goal.Y))
+
+	horizontal_min = 0.25
+	diagonal_min = 1.41421356237
+	
+	return diagonal_min * d_min + horizontal_min * (d_max - d_min)
 
 
 # /*\ =======================================================================
@@ -94,11 +87,11 @@ def PathCost(s, sprime):
 	# DIAGONAL
 	if(s.X != sprime.X and s.Y != sprime.Y):
 		if(sType == Type.REGULAR and sprimeType == Type.REGULAR):
-			cost = math.sqrt(2)
+			cost = 1.41421356237	# sqrt(2)
 		elif(sType == Type.HARD and sprimeType == Type.HARD):
-			cost = math.sqrt(8)
+			cost = 2.82842712475	# sqrt(8)
 		elif((sType == Type.REGULAR and sprimeType == Type.HARD) or (sType == Type.HARD and sprimeType == Type.REGULAR)):
-			cost = (math.sqrt(2) + math.sqrt(8)) / 2
+			cost = 2.12132034356	# (sqrt(2) + sqrt(8)) / 2
 
 	# HORIZONTAL/VERTICAL
 	else:
