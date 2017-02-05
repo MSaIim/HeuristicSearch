@@ -22,8 +22,10 @@ class Grid(object):
 			for x in range(Constants.ROWS)])
 
 		# Save the start, goal, and the eight hard to traverse centers
-		self.startLocation = Cell(-1, -1)
-		self.goalLocation = Cell(-1, -1)
+		self.startLocations = []
+		self.goalLocations = []
+		self.currentStart = None
+		self.currentGoal = None
 		self.locations = np.array([Point(0,0) for x in range(Constants.NUM_POINTS)])
 
 		# Create the different types of cells
@@ -75,35 +77,40 @@ class Grid(object):
 
 	# Choose the start and goal cells
 	def setStartAndGoal(self):
-		found = False
-
-		# Choose start vertex
+		# Get border cells
 		borderCells = self.getBorderCells()
-		while found == False:
-			index = randrange(0, len(borderCells))
-			point = borderCells[index]
 
-			if(self.cells[point.x, point.y].type != Type.BLOCKED):
-				self.cells[point.x, point.y].isStart = True
-				start = point
-				found = True
+		# Choose 10 start cells
+		for i in range(10):
+			found = False
+			while found == False:
+				index = randrange(0, len(borderCells))
+				point = borderCells[index]
+
+				if(self.cells[point.x, point.y].type != Type.BLOCKED):
+					self.startLocations.append(self.cells[point.x, point.y])
+					found = True
 
 		# Choose goal vertex
-		found = False
-		while found == False:
-			index = randrange(0, len(borderCells))
-			point = borderCells[index]
+		for i in range(10):
+			found = False
+			while found == False:
+				index = randrange(0, len(borderCells))
+				point = borderCells[index]
 
-			if(self.cells[point.x, point.y].type != Type.BLOCKED and point.distanceFrom(start) > 100):
-				self.cells[point.x, point.y].isGoal = True
-				goal = point
-				found = True
+				if(self.cells[point.x, point.y].type != Type.BLOCKED and self.cells[point.x, point.y] not in self.startLocations):
+					if(point.distanceFrom(Point(self.startLocations[i].X, self.startLocations[i].Y)) > 100):
+						self.goalLocations.append(self.cells[point.x, point.y])
+						found = True
 
 		# Set start and goal
-		self.startLocation = self.cells[start.x, start.y]
-		self.goalLocation = self.cells[goal.x, goal.y]
+		self.startLocations[0].isStart = True
+		self.goalLocations[0].isGoal = True
+		self.currentStart = self.startLocations[0]
+		self.currentGoal = self.goalLocations[0]
 
 
+	# Get a good high way
 	def createHighway(self, gridCells):
 		self.cells = gridCells
 
@@ -279,7 +286,7 @@ class Grid(object):
 	def setPath(self, path):
 		if(path != None):
 			for index in range(len(path)):
-				if(path[index] != self.startLocation and path[index] != self.goalLocation):
+				if(path[index] != self.currentStart and path[index] != self.currentGoal):
 					self.cells[path[index].X, path[index].Y].isPath = True
 
 
@@ -288,6 +295,20 @@ class Grid(object):
 		for x in range(Constants.ROWS):
 			for y in range(Constants.COLUMNS):
 				self.cells[x, y].resetAlgoCell()
+
+
+	# Set the start and goal
+	def setNewStartGoalPair(self, index):
+		for i in range(len(self.startLocations)):
+			self.cells[self.startLocations[i].X, self.startLocations[i].Y].isStart = False
+			self.cells[self.startLocations[i].X, self.startLocations[i].Y].isGoal = False
+
+			if(i == index):
+				self.cells[self.startLocations[i].X, self.startLocations[i].Y].isStart = True
+				self.cells[self.startLocations[i].X, self.startLocations[i].Y].isGoal = True
+				self.currentStart = self.cells[self.startLocations[i].X, self.startLocations[i].Y]
+				self.currentGoal = self.cells[self.startLocations[i].X, self.startLocations[i].Y]
+				break
 
 
 	# /*\ =======================================================================
@@ -308,8 +329,8 @@ class Grid(object):
 		# Write to file
 		with open(file, 'w') as f:
 			# Start and Goal locations on first two lines
-			f.write("".join(["(", str(self.startLocation.X), ",", str(self.startLocation.Y), ")", '\n']))
-			f.write("".join(["(", str(self.goalLocation.X), ",", str(self.goalLocation.Y), ")", '\n']))
+			f.write("".join(["(", str(self.startLocations[0].X), ",", str(self.startLocations[0].Y), ")", '\n']))
+			f.write("".join(["(", str(self.goalLocations[0].X), ",", str(self.goalLocations[0].Y), ")", '\n']))
 
 			# The eight hard-to-traverse center points
 			f.write('\n'.join(str(point) for point in self.locations))
@@ -372,8 +393,8 @@ class Grid(object):
 			x2, y2 = int(c), int(d)
 			self.cells[a, b].isStart = True
 			self.cells[c, d].isGoal = True
-			self.startLocation = self.cells[a, b]
-			self.goalLocation = self.cells[c, d]
+			self.startLocations[0] = self.cells[a, b]
+			self.goalLocations[0] = self.cells[c, d]
 			f.close()
 
 

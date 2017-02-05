@@ -56,15 +56,15 @@ class Cell(object):
 		self.type = Type.REGULAR
 		self.rectPos = rectPos
 
-		#if(self.rectPos is not None):
-		#	self.rect = pygame.Rect(self.rectPos[0]+20, self.rectPos[1]+20, Constants.WIDTH+1, Constants.HEIGHT+1)
-
 		# For algorithms
 		self.X = x
 		self.Y = y
 		self.G = math.inf
 		self.Parent = None
 		self.isPath = False
+
+		#if(self.rectPos is not None):
+		#	self.rect = pygame.Rect(self.rectPos[0]+20, self.rectPos[1]+20, Constants.WIDTH+1, Constants.HEIGHT+1)
 
 	# Reset the cell
 	def reset(self, x, y):
