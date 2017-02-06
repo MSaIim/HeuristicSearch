@@ -27,6 +27,13 @@ class WeightedAStar(Search):
 			# Goal found, stop the loop
 			if(s == self.goal):
 				self.time = int(round(time.time() * 1000)) - startTime
+
+				# For benchmarks
+				# for row in range(120):
+				# 	for col in range(160):
+				# 		if self.closedList[row, col] == True:
+				# 			self.nodeexpanded += 1
+				
 				return True
 
 			# Add it to visited list

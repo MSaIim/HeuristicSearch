@@ -1,3 +1,4 @@
+import re
 import numpy as np
 import tkinter as tk
 from tkinter import messagebox
@@ -314,9 +315,10 @@ class Grid(object):
 	# \*/ =======================================================================
 
 	# Saves the grid to a .map file
-	def save(self):
+	def save(self, file=None):
 		# Bring up save dialog box
-		file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "Resources/maps")
+		if(file is None):
+			file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "Resources/maps")
 
 		# Check if user clicked cancel
 		if file is None or file is '':
@@ -325,10 +327,16 @@ class Grid(object):
 		# Write to file
 		with open(file, 'w') as f:
 			# Start and Goal locations on first two lines
-			f.write("".join(["(", str(self.startLocations[0].X), ",", str(self.startLocations[0].Y), ")", '\n']))
-			f.write("".join(["(", str(self.goalLocations[0].X), ",", str(self.goalLocations[0].Y), ")", '\n']))
+			for i in range(len(self.startLocations)):
+				f.write("".join(["(", str(self.startLocations[i].X), ",", str(self.startLocations[i].Y), ")"]))
+
+			f.write('\n')
+
+			for i in range(len(self.goalLocations)):
+				f.write("".join(["(", str(self.goalLocations[i].X), ",", str(self.goalLocations[i].Y), ")"]))
 
 			# The eight hard-to-traverse center points
+			f.write('\n')
 			f.write('\n'.join(str(point) for point in self.locations))
 			f.write('\n')
 
@@ -341,14 +349,15 @@ class Grid(object):
 			f.close()
 
 		# Show message box
-		messagebox.showinfo("Map Save", "Map has been saved.")
+		#messagebox.showinfo("Map Save", "Map has been saved successfully.")
 		return True
 
 
 	# Saves the grid to a .map file
-	def load(self):
+	def load(self, file=None):
 		# Bring up save dialog box
-		file = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = "Resources/maps")
+		if(file is None):
+			file = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = "Resources/maps")
 
 		# Check if user clicked cancel
 		if file is None or file is '':
@@ -358,11 +367,12 @@ class Grid(object):
 		with open(file, 'r') as f:
 			index = 0
 			lines = f.read().split("\n")
-			start = lines[0]
-			goal = lines[1]
+			starts = [(int(x),int(y)) for x,y in re.findall(r"\((\d+),\s*(\d+)\)", lines[0])]
+			goals = [(int(x),int(y)) for x,y in re.findall(r"\((\d+),\s*(\d+)\)", lines[1])]
 			lines = lines[10:]
 			characters = [list(line) for line in lines]
 
+			# Set the type of cells
 			for row in range(Constants.ROWS):
 				for col in range(Constants.COLUMNS):
 					if(characters[row][col] == '0'):
@@ -383,14 +393,18 @@ class Grid(object):
 						self.cells[row, col].reset(row, col)
 						self.cells[row, col].type = Type.HARD
 
-			a, b = eval(start)
-			c, d = eval(goal)
-			x1, y1 = int(a), int(b)
-			x2, y2 = int(c), int(d)
-			self.cells[a, b].isStart = True
-			self.cells[c, d].isGoal = True
-			self.currentStart = self.cells[a, b]
-			self.currentGoal = self.cells[c, d]
+			# Get the start and goal locations
+			self.startLocations.clear()
+			self.goalLocations.clear()
+			for row, col in starts:
+				self.startLocations.append(self.cells[row, col])
+			for row, col in goals:
+				self.goalLocations.append(self.cells[row, col])
+
+			self.cells[self.startLocations[0].X, self.startLocations[0].Y].isStart = True
+			self.cells[self.goalLocations[0].X, self.goalLocations[0].Y].isGoal = True
+			self.currentStart = self.cells[self.startLocations[0].X, self.startLocations[0].Y]
+			self.currentGoal = self.cells[self.goalLocations[0].X, self.goalLocations[0].Y]
 			f.close()
 
 

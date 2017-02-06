@@ -29,8 +29,8 @@ def ManhattanDistance(s, goal):
 
 # Straight line distance
 def EuclideanDistance(s, goal):
-	dx = abs(s.X - goal.X)
-	dy = abs(s.Y - goal.Y)
+	dx = s.X - goal.X
+	dy = s.Y - goal.Y
 
 	return 0.25 * math.sqrt(dx*dx + dy*dy)
 
