@@ -37,4 +37,4 @@ Install [pygame](http://www.pygame.org/download.shtml) and [numpy](http://www.nu
     pip install pygame
     pip install numpy
     
-Once those are installed, just double click `Main.pyw` and everything should work. Please note: clicking on "Weighted AStar", "Start-Goal Pair", "Load Map", or "Save Map" buttons can bring up their pop up diaglog windows behind the main window sometimes.
+Once those are installed, just double click `Main.pyw` and everything should work. Please note: clicking on "Weighted AStar", "Start-Goal Pair", "Load Map", or "Save Map" buttons can bring up their pop up dialog window behind the main window sometimes.
