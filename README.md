@@ -1,6 +1,6 @@
 # ![](http://i.imgur.com/0ScJMnq.png) HeuristicSearch
 
-In this project, the AStar family of algorithms were implemented. To better understand the performance and how a heuristic guides the algorithm, there are five different ones to choose from (All the heuristic formulas can be found under `Algorithms/Formulas.py`), which are:
+In this project, the AStar family of algorithms were implemented to show how a computer can find its own path. To better understand the performance and how a heuristic guides the algorithm, there are five different ones to choose from (All the heuristic formulas can be found under `Algorithms/Formulas.py`), which are:
 
 + AStar Given
 + Manhattan Distance
@@ -30,9 +30,9 @@ This shows the path from start to goal (in yellow) using the AStar algorithm wit
 </p>
 
 ## ![] (http://i.imgur.com/O7Vcbty.png?1) Setup
-You must have `Python 3.6` installed with `pygame` and `numpy`. If you have Python2 installed alongside Pythong3, then run the following commands using `pip3`.
+You must have Python 3.6 installed with pygame and numpy. If you have Python2 installed alongside Python3, then run the following commands using `pip3`.
 
-Install [pygame](http://www.pygame.org/download.shtml) and [numpy](http://www.pygame.org/download.shtml)
+Install [pygame](http://www.pygame.org/download.shtml) and [numpy](http://www.numpy.org)
 
     pip install pygame
     pip install numpy
