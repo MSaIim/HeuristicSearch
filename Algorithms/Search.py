@@ -12,8 +12,8 @@ class Search(ABC):
 		self.time = 0
 
 		# For benchmarks
-		# self.pathlength = 0
-		# self.nodeexpanded = 0
+		self.pathlength = 0
+		self.nodeexpanded = 0
 
 		# Min Heap to hold nodes that might be expanded
 		self.fringe = Algorithms.Heap.PriorityQueue()
@@ -44,7 +44,7 @@ class Search(ABC):
 			cell = cell.Parent
 
 		# For benchmarks
-		# self.pathlength = self.goal.G
+		self.pathlength = self.goal.G
 		return searchPath
 
 
