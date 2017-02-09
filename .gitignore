@@ -90,3 +90,5 @@ ENV/
 
 # Other
 *.todo
+*.pdf
+*.tex

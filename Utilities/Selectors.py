@@ -11,7 +11,7 @@ from tkinter.ttk import Frame, Button, Label, Combobox
 # \*/ =======================================================================
 class StartGoalSelector(Form):
 	def __init__(self, startList, goalList):
-		super().__init__("Start-Goal Pair Selector", 320, 160)
+		super().__init__("Start-Goal Pair Selector", 320, 180)
 		self.startList = startList
 		self.index = -1
 
@@ -38,9 +38,9 @@ class StartGoalSelector(Form):
 		buttonRow = Frame(self)
 		buttonRow.pack(fill="both")
 		cancelButton = Button(buttonRow, text="Cancel", command=self.close)
-		cancelButton.pack(side=RIGHT, padx=(0, 80), pady=(25, 0))
+		cancelButton.pack(side=RIGHT, padx=(0, 60), pady=(30, 0))
 		selectButton = Button(buttonRow, text="Select", command=self.select)
-		selectButton.pack(side=LEFT, padx=(80, 0), pady=(25, 0))
+		selectButton.pack(side=LEFT, padx=(60, 0), pady=(30, 0))
 
 		# Run the main loop to show window
 		self.root.mainloop()
@@ -67,7 +67,7 @@ class HeuristicSelector(Form):
 
 	# Construct the window
 	def __init__(self):
-		super().__init__("Heuristic Selector", 400, 180)
+		super().__init__("Heuristic Selector", 400, 200)
 		self.weight = 0
 
 		# Information row
@@ -99,9 +99,9 @@ class HeuristicSelector(Form):
 		buttonRow = Frame(self)
 		buttonRow.pack(fill=X)
 		cancelButton = Button(buttonRow, text="Cancel", command=self.close)
-		cancelButton.pack(side=RIGHT, padx=(0, 40), pady=10)
+		cancelButton.pack(side=RIGHT, padx=(0, 40), pady=(20, 0))
 		selectButton = Button(buttonRow, text="Select", command=self.select)
-		selectButton.pack(side=RIGHT)
+		selectButton.pack(side=RIGHT, padx=(0, 0), pady=(20, 0))
 
 		# Run the main loop to show window
 		self.root.mainloop()

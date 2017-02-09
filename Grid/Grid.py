@@ -349,7 +349,7 @@ class Grid(object):
 			f.close()
 
 		# Show message box
-		#messagebox.showinfo("Map Save", "Map has been saved successfully.")
+		messagebox.showinfo("Map Save", "Map has been saved successfully.")
 		return True
 
 

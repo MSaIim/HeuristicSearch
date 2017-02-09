@@ -29,7 +29,7 @@ This shows the path from start to goal (in yellow) using the AStar algorithm wit
 <img src="http://i.imgur.com/zVWLYp0.png" />
 </p>
 
-## ![] (http://i.imgur.com/O7Vcbty.png?1) Setup
+## ![](http://i.imgur.com/O7Vcbty.png?1) Setup
 You must have Python 3.6 installed with pygame and numpy. If you have Python2 installed alongside Python3, then run the following commands using `pip3`.
 
 Install [pygame](http://www.pygame.org/download.shtml) and [numpy](http://www.numpy.org)
