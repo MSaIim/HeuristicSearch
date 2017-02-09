@@ -5,12 +5,12 @@ headers = [
 	("Uniform Cost Search", 0, 7),  ("Time (ms)", 1, 7),  ("Path Length (cost)", 1, 8),  ("Nodes Expanded", 1, 9),
 	("Manhattan ",          0, 11), ("Time (ms)", 1, 11), ("Path Length (cost)", 1, 12), ("Nodes Expanded", 1, 13),
 	("Manhattan ",          0, 15), ("Time (ms)", 1, 15), ("Path Length (cost)", 1, 16), ("Nodes Expanded", 1, 17),
-	("Euclidean ",   	    0, 19), ("Time (ms)", 1, 19), ("Path Length (cost)", 1, 20), ("Nodes Expanded", 1, 21),
-	("Euclidean ",   		0, 23), ("Time (ms)", 1, 23), ("Path Length (cost)", 1, 24), ("Nodes Expanded", 1, 25),
-	("Diagonal ",    		0, 27), ("Time (ms)", 1, 27), ("Path Length (cost)", 1, 28), ("Nodes Expanded", 1, 29),
-	("Diagonal ",    		0, 31), ("Time (ms)", 1, 31), ("Path Length (cost)", 1, 32), ("Nodes Expanded", 1, 33),
-	("Chebyshev ",   		0, 35), ("Time (ms)", 1, 35), ("Path Length (cost)", 1, 36), ("Nodes Expanded", 1, 37),
-	("Chebyshev ",   		0, 39), ("Time (ms)", 1, 39), ("Path Length (cost)", 1, 40), ("Nodes Expanded", 1, 41)
+	("Euclidean ",          0, 19), ("Time (ms)", 1, 19), ("Path Length (cost)", 1, 20), ("Nodes Expanded", 1, 21),
+	("Euclidean ",          0, 23), ("Time (ms)", 1, 23), ("Path Length (cost)", 1, 24), ("Nodes Expanded", 1, 25),
+	("Diagonal ",           0, 27), ("Time (ms)", 1, 27), ("Path Length (cost)", 1, 28), ("Nodes Expanded", 1, 29),
+	("Diagonal ",           0, 31), ("Time (ms)", 1, 31), ("Path Length (cost)", 1, 32), ("Nodes Expanded", 1, 33),
+	("Chebyshev ",          0, 35), ("Time (ms)", 1, 35), ("Path Length (cost)", 1, 36), ("Nodes Expanded", 1, 37),
+	("Chebyshev ",          0, 39), ("Time (ms)", 1, 39), ("Path Length (cost)", 1, 40), ("Nodes Expanded", 1, 41)
 ]
 avgHeader = [("Average", 13, 0), ("Average", 28, 0), ("Average", 43, 0), ("Average", 58, 0), ("Average", 73, 0)]
 
