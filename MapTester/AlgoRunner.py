@@ -1,6 +1,7 @@
 import sys
 import Algorithms.Formulas as Formulas
 import MapTester.ExcelLists as ExcelLists
+from pympler.asizeof import asizeof
 from Grid.Grid import Grid
 from Algorithms.AStar import AStar
 from Algorithms.WeightedAStar import WeightedAStar
@@ -18,11 +19,13 @@ class AlgoRunner(object):
 		self.time = []
 		self.pathlength = []
 		self.nodeexpanded = []
+		self.memreqs = []
 
 		# Averages
 		self.avgTime = []
 		self.avgPath = []
 		self.avgNode = []
+		self.avgMem = []
 
 
 	# Load the given map
@@ -67,6 +70,7 @@ class AlgoRunner(object):
 		self.avgTime.append(sum(self.time[ExcelLists.dataAvgs[index][0]:ExcelLists.dataAvgs[index][1]]) / 10)
 		self.avgPath.append(sum(self.pathlength[ExcelLists.dataAvgs[index][0]:ExcelLists.dataAvgs[index][1]]) / 10)
 		self.avgNode.append(sum(self.nodeexpanded[ExcelLists.dataAvgs[index][0]:ExcelLists.dataAvgs[index][1]]) / 10)
+		self.avgMem.append(sum(self.memreqs[ExcelLists.dataAvgs[index][0]:ExcelLists.dataAvgs[index][1]]) / 10)
 
 
 	# Calculate average across all maps
@@ -75,17 +79,20 @@ class AlgoRunner(object):
 		timeAvgTotal = [self.avgTime[index]]
 		pathAvgTotal = [self.avgPath[index]]
 		nodeAvgTotal = [self.avgNode[index]]
+		memAvgTotal  = [self.avgMem[index]]
 
 		# Get values from other maps, if any
 		for num in range(1, len(self.mapList)):
 			timeAvgTotal.append(self.avgTime[index+10*num])
 			pathAvgTotal.append(self.avgPath[index+10*num])
 			nodeAvgTotal.append(self.avgNode[index+10*num])
+			memAvgTotal.append(self.avgMem[index+10*num])
 
 		# Average them
 		self.avgAllTime = sum(timeAvgTotal) / len(timeAvgTotal)
 		self.avgAllPath = sum(pathAvgTotal) / len(pathAvgTotal)
 		self.avgAllNode = sum(nodeAvgTotal) / len(nodeAvgTotal)
+		self.avgAllMem = sum(memAvgTotal) / len(memAvgTotal)
 
 
 	# AStar algorithm with given heuristic
@@ -99,6 +106,7 @@ class AlgoRunner(object):
 					self.time.append(astar.time)
 					self.pathlength.append(astar.pathlength)
 					self.nodeexpanded.append(astar.nodeexpanded)
+					self.memreqs.append(asizeof(astar) / 1000)
 
 		self.calculateAverage(0)
 		self.printDot()
@@ -115,6 +123,7 @@ class AlgoRunner(object):
 					self.time.append(uniformCost.time)
 					self.pathlength.append(uniformCost.pathlength)
 					self.nodeexpanded.append(uniformCost.nodeexpanded)
+					self.memreqs.append(asizeof(uniformCost) / 1000)
 
 		self.calculateAverage(1)
 		self.printDot()
@@ -131,6 +140,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(2)
 		self.printDot()
@@ -147,6 +157,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(3)
 		self.printDot()
@@ -163,6 +174,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(4)
 		self.printDot()
@@ -179,6 +191,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(5)
 		self.printDot()
@@ -195,6 +208,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(6)
 		self.printDot()
@@ -211,6 +225,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(7)
 		self.printDot()
@@ -227,6 +242,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(8)
 		self.printDot()
@@ -243,6 +259,7 @@ class AlgoRunner(object):
 					self.time.append(weightedAStar.time)
 					self.pathlength.append(weightedAStar.pathlength)
 					self.nodeexpanded.append(weightedAStar.nodeexpanded)
+					self.memreqs.append(asizeof(weightedAStar) / 1000)
 
 		self.calculateAverage(9)
 		self.printDot()

@@ -78,27 +78,27 @@ class MapTester(object):
 				heuristic = ExcelLists.headers[i][0]
 
 				# Get the different weights
-				if(ExcelLists.headers[i][2] >= 11 and isWeight1):
+				if(ExcelLists.headers[i][2] >= 13 and isWeight1):
 					isWeight1 = False
 					heuristic = ''.join([ExcelLists.headers[i][0], "(w=", str(self.algos.weight1), ")"])
-				elif(ExcelLists.headers[i][2] >= 11 and isWeight1 == False):
+				elif(ExcelLists.headers[i][2] >= 13 and isWeight1 == False):
 					isWeight1 = True
 					heuristic = ''.join([ExcelLists.headers[i][0], "(w=", str(self.algos.weight2), ")"])
 
-				# Write the heuristic
-				self.mapSheet.write_merge(ExcelLists.dataRows[row]-2, ExcelLists.dataRows[row]-2, ExcelLists.headers[i][2], ExcelLists.headers[i][2]+2, heuristic, algo_cell)
+				# Write the heuristic (top_row, bottom_row, left_column, right_column)
+				self.mapSheet.write_merge(ExcelLists.dataRows[row]-2, ExcelLists.dataRows[row]-2, ExcelLists.headers[i][2], ExcelLists.headers[i][2]+3, heuristic, algo_cell)
 
-			# Print the data headers (Check if column is "Path Length" or "Nodes Expanded" for width)
+			# Print the data headers (Check if column is "Path Length", "Nodes Expanded", or "Memory (KB)" for width)
 			elif(ExcelLists.headers[i][1] == 1):
-				if(ExcelLists.headers[i][2] > 2 and ExcelLists.headers[i][0] != "Time (ms)"):
+				if(ExcelLists.headers[i][2] >= 3 and ExcelLists.headers[i][0] != "Time (ms)"):
 					self.mapSheet.col(ExcelLists.headers[i][2]).width = 4500
 					self.mapSheet.write(ExcelLists.dataRows[row]-1, ExcelLists.headers[i][2], ExcelLists.headers[i][0], head_cell)
 				else:
 					self.mapSheet.write(ExcelLists.dataRows[row]-1, ExcelLists.headers[i][2], ExcelLists.headers[i][0], sng_cell)
 
 			# Everything else ("Average")
-			else:
-				self.mapSheet.write(ExcelLists.avgHeader[row][1], ExcelLists.avgHeader[row][2], ExcelLists.avgHeader[row][0])
+			else: # (top_row, bottom_row, left_column, right_column)
+				self.mapSheet.write_merge(ExcelLists.avgHeader[row][1], ExcelLists.avgHeader[row][1], ExcelLists.avgHeader[row][2], ExcelLists.avgHeader[row][2]+1, ExcelLists.avgHeader[row][0])
 
 		# Write start/goal locations
 		for i in range(0, 10):
@@ -108,11 +108,14 @@ class MapTester(object):
 		# Get the data from the algorithms
 		for col in range(len(ExcelLists.dataCols)):
 			num = 0
-			avgIndex = ExcelLists.dataAvgs[row][0] + col
+			avgIndex = ExcelLists.dataAvgs[row][0] + col 	# Go to next heuristic
+
+			# Go through the algorithm and get the 10 numbers for each column
 			for i in range(ExcelLists.dataAvgs[col][0], ExcelLists.dataAvgs[col][1]):
 				self.mapSheet.write(ExcelLists.dataRows[row]+num, ExcelLists.dataCols[col], self.algos.time[i])
 				self.mapSheet.write(ExcelLists.dataRows[row]+num, ExcelLists.dataCols[col]+1, self.algos.pathlength[i])
 				self.mapSheet.write(ExcelLists.dataRows[row]+num, ExcelLists.dataCols[col]+2, self.algos.nodeexpanded[i])
+				self.mapSheet.write(ExcelLists.dataRows[row]+num, ExcelLists.dataCols[col]+3, self.algos.memreqs[i])
 
 				# Go to next row
 				num += 1
@@ -121,6 +124,7 @@ class MapTester(object):
 			self.mapSheet.write(ExcelLists.dataRows[row]+11, ExcelLists.dataCols[col], self.algos.avgTime[avgIndex])
 			self.mapSheet.write(ExcelLists.dataRows[row]+11, ExcelLists.dataCols[col]+1, self.algos.avgPath[avgIndex])
 			self.mapSheet.write(ExcelLists.dataRows[row]+11, ExcelLists.dataCols[col]+2, self.algos.avgNode[avgIndex])
+			self.mapSheet.write(ExcelLists.dataRows[row]+11, ExcelLists.dataCols[col]+3, self.algos.avgMem[avgIndex])
 
 
 	# Write averages to excel sheet
@@ -130,8 +134,8 @@ class MapTester(object):
 		heu_cell = xlwt.easyxf('pattern: pattern solid, fore_colour light_green;' 'font: colour black, bold True;')
 		avg_cell = xlwt.easyxf('pattern: pattern solid, fore_colour light_green;' 'font: colour black, bold True; align: horiz right')
 
-		# Write details
-		self.avgSheet.write_merge(1, 1, 1, 4, "Averages across all 5 maps. Note: (*) No Heuristic.", detail_cell)
+		# Write details (top_row, bottom_row, left_column, right_column)
+		self.avgSheet.write_merge(1, 1, 1, 5, "Averages across all 5 maps. [Note: (*) means no heuristic.]", detail_cell)
 
 		# Write the headers (Keep "Heuristics" on the left side)
 		for i in range(len(ExcelLists.avgHeaders)):
@@ -167,4 +171,5 @@ class MapTester(object):
 			self.avgSheet.write(ExcelLists.heuristics[i][1], ExcelLists.heuristics[i][2]+1, self.algos.avgAllTime)
 			self.avgSheet.write(ExcelLists.heuristics[i][1], ExcelLists.heuristics[i][2]+2, self.algos.avgAllPath)
 			self.avgSheet.write(ExcelLists.heuristics[i][1], ExcelLists.heuristics[i][2]+3, self.algos.avgAllNode)
+			self.avgSheet.write(ExcelLists.heuristics[i][1], ExcelLists.heuristics[i][2]+4, self.algos.avgAllMem)
 

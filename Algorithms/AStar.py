@@ -5,7 +5,8 @@ from Algorithms.Search import Search
 class AStar(Search):
 	def __init__(self, grid, start, goal):
 		super().__init__(grid, start, goal)
-		self.sqrtTwo = math.sqrt(2)
+		self.sqrtTwo = math.sqrt(2)		
+
 		
 	# Start the algoirthm. Searches for the best path based on the heuristic.
 	def search(self):
