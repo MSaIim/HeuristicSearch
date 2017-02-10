@@ -126,12 +126,7 @@ class GUI(object):
 
 					self.time = astar.time
 					self.write_info(self.clickedCell.X, self.clickedCell.Y)
-
-					tr.create_snapshot()
-					tr.stats.print_summary()
-					print(asizeof.asizeof(astar))
 				
-
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
 				# Ask for heuristic and weight

@@ -7,7 +7,6 @@ class AStar(Search):
 		super().__init__(grid, start, goal)
 		self.sqrtTwo = math.sqrt(2)		
 
-		
 	# Start the algoirthm. Searches for the best path based on the heuristic.
 	def search(self):
 		startTime = int(round(time.time() * 1000))	# Get when the algorithm started
