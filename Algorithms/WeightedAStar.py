@@ -42,7 +42,7 @@ class WeightedAStar(SingleSearch):
             sprime.G = math.inf
             sprime.Parent = None
 
-          self.updateVertex(s, sprime)
+          self.UpdateVertex(s, sprime)
 
     # No path found
     self.time = int(round(time.time() * 1000)) - startTime
@@ -50,7 +50,7 @@ class WeightedAStar(SingleSearch):
 
 
   # Update a cell's G value and its parent
-  def updateVertex(self, s, sprime):
+  def UpdateVertex(self, s, sprime):
     # Get the cost to traverse + distance to root
     cost = s.G + Formulas.PathCost(s, sprime) 
 

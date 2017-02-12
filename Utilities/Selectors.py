@@ -19,8 +19,8 @@ class StartGoalSelector(Form):
     infoRow = Frame(self)
     infoRow.pack(fill=X)
     heuristicLabel = Label(infoRow, text="Please select a start and goal pair.")
-    heuristicLabel.config(font=("Calibri", 14))
-    heuristicLabel.pack(side=LEFT, padx=30, pady=20)
+    heuristicLabel.config(font=("Calibri", 12))
+    heuristicLabel.pack(side=LEFT, padx=(40,0), pady=20)
 
     # Radio button row
     self.pairs = [None for x in range(10)]
@@ -31,7 +31,7 @@ class StartGoalSelector(Form):
     startGoalRow.pack(fill=X)
     self.combobox = Combobox(startGoalRow, state="readonly", values=self.pairs)
     self.combobox.bind("<<>ComboboxSelected>")
-    self.combobox.set("".join(["Start: (", str(startList[0].X), ",", str(startList[0].Y), ") | Goal: (", str(goalList[0].X), ",", str(goalList[0].Y), ")"]))
+    self.combobox.set(self.pairs[0])
     self.combobox.pack(fill=X, padx=(40, 40), expand=True)
 
     # Button row
@@ -73,9 +73,9 @@ class WeightedSelector(Form):
     # Information row
     infoRow = Frame(self)
     infoRow.pack(fill=X)
-    heuristicLabel = Label(infoRow, text="     Please select a heuristic and a weight.")
-    heuristicLabel.config(font=("Calibri", 14))
-    heuristicLabel.pack(side=LEFT, padx=30, pady=20)
+    heuristicLabel = Label(infoRow, text="Please select a heuristic and a weight.")
+    heuristicLabel.config(font=("Calibri", 12))
+    heuristicLabel.pack(side=LEFT, padx=(70, 0), pady=20)
 
     # Heuristic row
     heuristicRow = Frame(self)
