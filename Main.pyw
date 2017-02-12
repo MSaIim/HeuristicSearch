@@ -3,7 +3,7 @@ import Algorithms.Formulas as Formulas
 import Utilities.Constants as Constants
 from tkinter import messagebox
 from Grid.Grid import Grid
-from Utilities.Selectors import HeuristicSelector, StartGoalSelector
+from Utilities.Selectors import WeightedSelector, StartGoalSelector, SequentialSelector
 from Utilities.Button import Button
 from Algorithms.AStar import AStar
 from Algorithms.WeightedAStar import WeightedAStar
@@ -130,7 +130,7 @@ class GUI(object):
 			# WEIGHTED ASTAR BUTTON CLICKED
 			elif self.weightedAStarButton.pressed(pos):
 				# Ask for heuristic and weight
-				heuForm = HeuristicSelector()
+				heuForm = WeightedSelector()
 				weight = heuForm.weight
 
 				# Run with the given weight and heuristic
@@ -163,6 +163,21 @@ class GUI(object):
 
 					self.time = uniformCost.time
 					self.write_info(self.clickedCell.X, self.clickedCell.Y)
+
+			# SEQUENTIAL ASTAR BUTTON CLICKED
+			elif self.seqAStarButton.pressed(pos):
+				# Ask for anchor, heuristics, and weight
+				seqForm = SequentialSelector()
+				weight1 = seqForm.weight1
+				weight2 = seqForm.weight2
+
+				# Run with the given weights and heuristics
+				if(weight1 > 0 and weight2 > 0):
+					print("Run sequential algorithm here.")
+
+				# Remove from memory
+				del seqForm
+
 					
 			# Convert x/y screen coordinates to grid coordinates				 
 			column = pos[0] // (Constants.WIDTH + Constants.MARGIN) - 3
@@ -185,12 +200,12 @@ class GUI(object):
 		self.screen.fill(Constants.WHITE)
 
 		# Draw boxes (surface, color, rectangle[x, y, width, height], width)
-		pygame.draw.rect(self.screen, Constants.BLACK, [18, 18, 965, 725], 1)				# Border around grid
-		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 28, 230, 200], 1)			# Information box
-		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 260, 230, 280], 1)		# Algoirthms box
-		pygame.draw.rect(self.screen, Constants.WHITE, [1080, 10, 125, 100])				# White box (information)
-		pygame.draw.rect(self.screen, Constants.WHITE, [1090, 230, 115, 100])				# White box (algorithms)
-		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1055, 455, 180, 1], 1)
+		pygame.draw.rect(self.screen, Constants.BLACK, [18, 18, 965, 725], 1)               # Border around grid
+		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 28, 230, 200], 1)         # Information box
+		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1030, 260, 230, 310], 1)        # Algoirthms box
+		pygame.draw.rect(self.screen, Constants.WHITE, [1080, 10, 125, 100])                # White box (information)
+		pygame.draw.rect(self.screen, Constants.WHITE, [1090, 230, 115, 100])               # White box (algorithms)
+		pygame.draw.rect(self.screen, Constants.DARK_BLUE, [1055, 500, 180, 1], 1)          # Horizontal line
 
 		# Draw text (surface, text, text_color, text_size, x, y)
 		self.write_text("Information", Constants.BLACK, 20, 1085, 20)
@@ -210,13 +225,15 @@ class GUI(object):
 		self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
 
 		# Buttons (text, text_color, length, height, x_pos, y_pos, btn_color, hover_color)
-		self.reloadButton = Button("Regenerate Map", 14, Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)					# Reload button
-		self.saveButton = Button("Save Map", 7, Constants.WHITE, 110, 40, 1150, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Save button
-		self.loadButton = Button("Load Map", 7, Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)					# Load button
-		self.astarButton = Button("AStar", 11, Constants.WHITE, 180, 40, 1055, 295, Constants.LIGHT_BLUE, Constants.DARK_BLUE)				# AStar button
-		self.weightedAStarButton = Button("Weighted A*", 11, Constants.WHITE, 180, 40, 1055, 345, Constants.LIGHT_BLUE, Constants.DARK_BLUE)		# Weighted A* button
-		self.uniformCostButton = Button("Uniform Cost", 11, Constants.WHITE, 180, 40, 1055, 395, Constants.LIGHT_BLUE, Constants.DARK_BLUE)			# Uniform Cost button
-		self.startGoalButton = Button("Start-Goal Pair", 12, Constants.WHITE, 180, 40, 1055, 475, Constants.PINK, Constants.DARK_PINK)				# Start-Goal Pair button
+		self.reloadButton = Button("Regenerate Map", 14, Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)                  # Reload button
+		self.saveButton = Button("Save Map", 7, Constants.WHITE, 110, 40, 1150, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                     # Save button
+		self.loadButton = Button("Load Map", 7, Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                     # Load button
+		self.astarButton = Button("AStar [Given Heuristic]", 11, Constants.WHITE, 180, 35, 1055, 285, Constants.LIGHT_BLUE, Constants.DARK_BLUE)    # AStar button
+		self.weightedAStarButton = Button("Weighted A*", 11, Constants.WHITE, 180, 35, 1055, 325, Constants.LIGHT_BLUE, Constants.DARK_BLUE)        # Weighted A* button
+		self.uniformCostButton = Button("Uniform Cost", 11, Constants.WHITE, 180, 35, 1055, 365, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
+		self.seqAStarButton = Button("Sequential A*", 11, Constants.WHITE, 180, 35, 1055, 405, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
+		self.intAStarButton = Button("Integrated A*", 11, Constants.WHITE, 180, 35, 1055, 445, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
+		self.startGoalButton = Button("Start-Goal Pair", 12, Constants.WHITE, 180, 35, 1055, 520, Constants.PINK, Constants.DARK_PINK)              # Start-Goal Pair button
 
 		# Add buttons to list
 		buttonAppend = self.buttons.append
@@ -226,6 +243,8 @@ class GUI(object):
 		buttonAppend(self.astarButton)
 		buttonAppend(self.weightedAStarButton)
 		buttonAppend(self.uniformCostButton)
+		buttonAppend(self.seqAStarButton)
+		buttonAppend(self.intAStarButton)
 		buttonAppend(self.startGoalButton)
 
 
