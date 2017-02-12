@@ -74,7 +74,7 @@ class Cell(object):
 		# For algorithms
 		self.X = x
 		self.Y = y
-		self.G = math.inf
+		self.G = 0
 		self.Parent = None
 		self.isPath = False
 
@@ -86,18 +86,18 @@ class Cell(object):
 		self.Type = Type.REGULAR
 		self.X = x
 		self.Y = y
-		self.G = math.inf
+		self.G = 0
 		self.Parent = None
 		self.isPath = False
 
 	# Reset the algorithm values
 	def resetAlgoCell(self):
-		self.G = math.inf
+		self.G = 0
 		self.Parent = None
 		self.isPath = False
 
 	# Used for tie breakers inside the heap. Checks which one is the larger G value
-	def __lt__(self, other):
+	def __gt__(self, other):
 		return self.G > other.G
 
 	# Equals method for use with lists (in, not in)

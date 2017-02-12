@@ -1,5 +1,5 @@
 import sys
-import Algorithms.Formulas as Formulas
+import Algorithms.Base.Formulas as Formulas
 import MapTester.ExcelLists as ExcelLists
 from pympler.asizeof import asizeof
 from Grid.Grid import Grid

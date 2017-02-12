@@ -15,6 +15,11 @@ class PriorityQueue(object):
 		return heapq.heappop(self.heap)
 
 
+	# Look at the root element
+	def peek(self):
+		return self.heap[0];
+
+
 	# Check if and item is inside the heap
 	def contains(self, item):
 		return item in [x[1] for x in self.heap]

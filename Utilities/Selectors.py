@@ -1,4 +1,4 @@
-import Algorithms.Formulas as Formulas
+import Algorithms.Base.Formulas as Formulas
 from Utilities.Form import Form
 from tkinter import Tk, X, LEFT, RIGHT, Spinbox, messagebox
 from tkinter.ttk import Frame, Button, Label, Combobox
@@ -39,7 +39,7 @@ class StartGoalSelector(Form):
 		buttonRow.pack(fill="both")
 		cancelButton = Button(buttonRow, text="Cancel", command=self.close)
 		cancelButton.pack(side=RIGHT, padx=(0, 60), pady=(30, 0))
-		selectButton = Button(buttonRow, text="Submit", command=self.submit)
+		selectButton = Button(buttonRow, text="Select", command=self.select)
 		selectButton.pack(side=LEFT, padx=(60, 0), pady=(30, 0))
 
 		# Run the main loop to show window
@@ -47,7 +47,7 @@ class StartGoalSelector(Form):
 
 
 	# Get the value from the combobox and return the index
-	def submit(self):
+	def select(self):
 		for i in range(len(self.startList)):
 			if(self.combobox.get() == self.pairs[i]):
 				self.index = i
@@ -123,7 +123,7 @@ class WeightedSelector(Form):
 		# Check if the weight is good
 		try:
 			self.weight = float(self.weightEntry.get())
-			if(self.weight > 0):
+			if(self.weight >= 1):
 				self.close()
 			else:
 				messagebox.showinfo("Weight Error", "Please enter a numeric value > 0 for the weight.")
@@ -234,20 +234,31 @@ class SequentialSelector(Form):
 			self.heuristicBox2['values'] = self.heuristics
 			self.heuristicBox3['values'] = self.heuristics
 			self.heuristicBox4['values'] = self.heuristics
-			self.heuristicBox1.set("None")
-			self.heuristicBox2.set("None")
-			self.heuristicBox3.set("None")
-			self.heuristicBox4.set("None")
+
+			if(self.heuristicBox1.get() == "Manhattan Distance"):
+				self.heuristicBox1.set("None")
+			if(self.heuristicBox2.get() == "Manhattan Distance"):
+				self.heuristicBox2.set("None")
+			if(self.heuristicBox3.get() == "Manhattan Distance"):
+				self.heuristicBox3.set("None")
+			if(self.heuristicBox4.get() == "Manhattan Distance"):
+				self.heuristicBox4.set("None")
+
 		elif(self.anchorBox.get() == "Euclidean Distance"):
 			self.heuristics = ['None', 'AStar (Given Heuristic)', 'Manhattan Distance', 'Chebyshev Distance', 'Diagonal Distance']
 			self.heuristicBox1['values'] = self.heuristics
 			self.heuristicBox2['values'] = self.heuristics
 			self.heuristicBox3['values'] = self.heuristics
 			self.heuristicBox4['values'] = self.heuristics
-			self.heuristicBox1.set("None")
-			self.heuristicBox2.set("None")
-			self.heuristicBox3.set("None")
-			self.heuristicBox4.set("None")
+
+			if(self.heuristicBox1.get() == "Euclidean Distance"):
+				self.heuristicBox1.set("None")
+			if(self.heuristicBox2.get() == "Euclidean Distance"):
+				self.heuristicBox2.set("None")
+			if(self.heuristicBox3.get() == "Euclidean Distance"):
+				self.heuristicBox3.set("None")
+			if(self.heuristicBox4.get() == "Euclidean Distance"):
+				self.heuristicBox4.set("None")
 
 
 	# Get the values from the combobox and the text entry when user presses "Select"
@@ -285,7 +296,7 @@ class SequentialSelector(Form):
 				self.weight1 = float(self.weightEntry1.get())
 				self.weight2 = float(self.weightEntry2.get())
 
-				if(self.weight1 > 0 and self.weight2 > 0):
+				if(self.weight1 >= 1 and self.weight2 >= 1):
 					self.close()
 				else:
 					messagebox.showinfo("Weight Error", "Please enter a numeric value > 0 for the weights.")

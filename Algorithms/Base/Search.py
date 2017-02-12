@@ -1,5 +1,5 @@
 import numpy as np
-import Algorithms.Heap
+import Algorithms.Base.Heap
 import Utilities.Constants as Constants
 from abc import ABC, abstractmethod
 
@@ -16,7 +16,7 @@ class Search(ABC):
 		self.nodeexpanded = 0
 
 		# Min Heap to hold nodes that might be expanded
-		self.fringe = Algorithms.Heap.PriorityQueue()
+		self.fringe = Algorithms.Base.Heap.PriorityQueue()
 
 		# 2D array of booleans to know which cell is in the fringe
 		self.openList = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])

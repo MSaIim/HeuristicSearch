@@ -1,13 +1,14 @@
 import pygame, os
-import Algorithms.Formulas as Formulas
+import Algorithms.Base.Formulas as Formulas
 import Utilities.Constants as Constants
 from tkinter import messagebox
 from Grid.Grid import Grid
-from Utilities.Selectors import WeightedSelector, StartGoalSelector, SequentialSelector
 from Utilities.Button import Button
 from Algorithms.AStar import AStar
 from Algorithms.WeightedAStar import WeightedAStar
 from Algorithms.UniformCost import UniformCost
+from Algorithms.SequentialAStar import SequentialAStar
+from Utilities.Selectors import WeightedSelector, StartGoalSelector, SequentialSelector
 
 
 class GUI(object):
@@ -134,7 +135,7 @@ class GUI(object):
 				weight = heuForm.weight
 
 				# Run with the given weight and heuristic
-				if(weight > 0):
+				if(weight >= 1):
 					self.heuristic = heuForm.heuristic
 					with WeightedAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, self.heuristic, weight) as weightedAStar:
 						self.grid.resetAlgoCells()
@@ -168,12 +169,23 @@ class GUI(object):
 			elif self.seqAStarButton.pressed(pos):
 				# Ask for anchor, heuristics, and weight
 				seqForm = SequentialSelector()
-				weight1 = seqForm.weight1
-				weight2 = seqForm.weight2
+				w1 = seqForm.weight1
+				w2 = seqForm.weight2
 
 				# Run with the given weights and heuristics
-				if(weight1 > 0 and weight2 > 0):
-					print("Run sequential algorithm here.")
+				if(w1 >= 1 and w2 >= 1):
+					heuristics = seqForm.heuristicFunctions
+					n = len(heuristics)
+					with SequentialAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, n, w1, w2, heuristics) as seqAStar:
+						self.grid.resetAlgoCells()
+						found = seqAStar.search()
+						if(found):
+							self.grid.setPath(seqAStar.searchPath)
+						else:
+							messagebox.showinfo("Sequential AStar Results", "No path could be found to the goal.")
+
+					self.time = seqAStar.time
+					self.write_info(self.clickedCell.X, self.clickedCell.Y)
 
 				# Remove from memory
 				del seqForm

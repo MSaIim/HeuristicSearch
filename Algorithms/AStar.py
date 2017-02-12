@@ -1,6 +1,7 @@
 import math, time
-import Algorithms.Formulas as Formulas
-from Algorithms.Search import Search
+import Algorithms.Base.Formulas as Formulas
+from Algorithms.Base.Search import Search
+
 
 class AStar(Search):
 	def __init__(self, grid, start, goal):
