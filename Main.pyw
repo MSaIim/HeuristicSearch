@@ -50,7 +50,7 @@ class GUI(object):
 		done = False
 
 		while not done:
-			self.gridSurface.fill(Constants.GREEN)
+			self.gridSurface.fill(Constants.LIGHT_GREEN)
 
 			# Handle any input
 			for event in pygame.event.get():

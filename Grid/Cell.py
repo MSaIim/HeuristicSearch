@@ -128,7 +128,7 @@ class Cell(object):
 		if self.isHighway and self.type == Type.HARD:
 			color = Constants.DARK_BLUE			# Highway and hard to traverse
 		if self.isHighway and self.type == Type.REGULAR:
-			color = Constants.LIGHT_BLUE		# Highway and regular
+			color = Constants.HIGHWAY_BLUE		# Highway and regular
 		if self.isStart == True:			
 			color = Constants.WHITE				# Start vertex
 		if self.isGoal == True:			
