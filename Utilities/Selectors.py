@@ -1,7 +1,7 @@
 import Algorithms.Formulas as Formulas
 from Utilities.Form import Form
 from tkinter import Tk, X, LEFT, RIGHT, Spinbox, messagebox
-from tkinter.ttk import Frame, Button, Label, Combobox, LabelFrame
+from tkinter.ttk import Frame, Button, Label, Combobox
 
 
 # /*\ =======================================================================
