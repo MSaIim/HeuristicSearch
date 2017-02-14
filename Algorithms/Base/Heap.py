@@ -6,7 +6,7 @@ class PriorityQueue(object):
 
 
   # Push an item onto the heap with the given priority
-  def push(self, item, priority):
+  def push(self, priority, item):
     heapq.heappush(self.heap, (priority, item))
 
 
@@ -30,19 +30,9 @@ class PriorityQueue(object):
     return len(self.heap) == 0
 
 
-  # Remove and item from the heap and bubble up
+  # Remove item from the heap if it exists
   def remove(self, item):
-    index = 0
-
-    for i in range(len(self.heap)):
-      if(self.heap[i][1] == item):
-        index = i
-
-    # Move slot to be removed to top of heap
-    while index > 0:
-      up = int((index + 1) / 2 - 1)
-      self.heap[index] = self.heap[up]
-      index = up
-
-    # Remove top of heap and restore heap property
-    heapq.heappop(self.heap)
+    # TODO: Make this not O(n)
+    if (item in self.heap):
+      self.heap.remove(item)
+      heapq.heapify(self.heap)

@@ -17,7 +17,8 @@ class WeightedAStar(SingleSearch):
     self.start.H = self.Heuristic(self.start, self.goal)
     self.start.F = self.start.G + self.start.H
     self.start.Parent = self.start
-    self.fringe.push(self.start, self.start.G + self.weight * self.start.H)
+    self.start.Priority = self.start.G + self.weight * self.start.H
+    self.fringe.push(self.start.Priority, self.start)
 
     # Loop until goal is found or fringe is empty (no more nodes to expand)
     while(self.fringe.isEmpty() == False):
@@ -56,6 +57,9 @@ class WeightedAStar(SingleSearch):
 
     # Check if good path found
     if(cost < sprime.G):
+      # Get old cost for removal
+      old_priority = sprime.Priority
+
       # Set all the updated values for cell
       sprime.G = cost
       sprime.H = self.Heuristic(sprime, self.goal)
@@ -63,9 +67,10 @@ class WeightedAStar(SingleSearch):
       sprime.Parent = s
 
       # Remove it from fringe as it has been updated
-      if(self.openList[sprime.X, sprime.Y]):
-        self.fringe.remove(sprime)
+      if(self.openList[sprime.X, sprime.Y] == True):
+        self.fringe.remove((old_priority, sprime))
 
       # Push the updated cell in
+      sprime.Priority = sprime.G + self.weight * sprime.H
+      self.fringe.push(sprime.Priority, sprime)
       self.openList[sprime.X, sprime.Y] = True
-      self.fringe.push(sprime, sprime.G + self.weight * sprime.H)

@@ -17,7 +17,8 @@ class AStar(SingleSearch):
     self.start.H = self.Heuristic(self.start)
     self.start.F = self.start.G + self.start.H
     self.start.Parent = self.start
-    self.fringe.push(self.start, self.start.F)
+    self.start.Priority = self.start.F
+    self.fringe.push(self.start.Priority, self.start)
 
     # Loop until goal is found or fringe is empty (no more nodes to expand)
     while(self.fringe.isEmpty() == False):
@@ -52,10 +53,13 @@ class AStar(SingleSearch):
   # Update a cell's G value and its parent
   def UpdateVertex(self, s, sprime):
     # Get the cost to traverse + distance to root
-    cost = s.G + Formulas.PathCost(s, sprime) 
+    cost = s.G + Formulas.PathCost(s, sprime)
 
     # Check if good path found
     if(cost < sprime.G):
+      # Get old cost for removal
+      old_priority = sprime.Priority
+
       # Set all the updated values for cell
       sprime.H = self.Heuristic(sprime)
       sprime.G = cost
@@ -63,12 +67,13 @@ class AStar(SingleSearch):
       sprime.Parent = s 
 
       # Remove it from fringe as it has been updated
-      if(self.openList[sprime.X, sprime.Y]):
-        self.fringe.remove(sprime)
+      if(self.openList[sprime.X, sprime.Y] == True):
+        self.fringe.remove((old_priority, sprime))
 
       # Push the updated cell in
+      sprime.Priority = sprime.F
+      self.fringe.push(sprime.Priority, sprime)
       self.openList[sprime.X, sprime.Y] = True
-      self.fringe.push(sprime, sprime.F)
 
 
   # Heuristic to guide the A* along the optimal path

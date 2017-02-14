@@ -15,7 +15,8 @@ class UniformCost(SingleSearch):
     self.start.G = 0
     self.start.F = 0
     self.start.Parent = self.start
-    self.fringe.push(self.start, self.start.G)
+    self.start.Priority = self.start.G
+    self.fringe.push(self.start.Priority, self.start)
 
     # Loop until goal is found or fringe is empty (no more nodes to expand)
     while(self.fringe.isEmpty() == False):
@@ -54,15 +55,19 @@ class UniformCost(SingleSearch):
 
     # Check if good path found
     if(cost < sprime.G):
+      # Get old cost for removal
+      old_priority = sprime.Priority
+
       # Set all the updated values for cell
       sprime.G = cost 
       sprime.F = sprime.G
       sprime.Parent = s 
 
       # Remove it from fringe as it has been updated
-      if(self.openList[sprime.X, sprime.Y]):
-        self.fringe.remove(sprime)
+      if(self.openList[sprime.X, sprime.Y] == True):
+        self.fringe.remove((old_priority, sprime))
 
       # Push the updated cell in
+      sprime.Priority = sprime.G
+      self.fringe.push(sprime.Priority, sprime)
       self.openList[sprime.X, sprime.Y] = True
-      self.fringe.push(sprime, sprime.G)

@@ -77,6 +77,7 @@ class Cell(object):
     self.F = 0
     self.G = 0
     self.H = 0
+    self.Priority = 0
     self.Parent = None
     self.isPath = False
 
@@ -88,17 +89,14 @@ class Cell(object):
     self.Type = Type.REGULAR
     self.X = x
     self.Y = y
-    self.F = 0
-    self.G = 0
-    self.H = 0
-    self.Parent = None
-    self.isPath = False
+    self.resetAlgoCell()
 
   # Reset the algorithm values
   def resetAlgoCell(self):
     self.F = 0
     self.G = 0
     self.H = 0
+    self.Priority = 0
     self.Parent = None
     self.isPath = False
 

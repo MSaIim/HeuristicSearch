@@ -8,6 +8,7 @@ from Algorithms.AStar import AStar
 from Algorithms.WeightedAStar import WeightedAStar
 from Algorithms.UniformCost import UniformCost
 from Algorithms.SequentialAStar import SequentialAStar
+from Algorithms.IntegratedAStar import IntegratedAStar
 from Utilities.Selectors import WeightedSelector, StartGoalSelector, SequentialSelector
 
 
@@ -182,8 +183,29 @@ class GUI(object):
           self.time = seqAStar.time
           self.write_info(self.clickedCell.X, self.clickedCell.Y)
 
+       # INTEGRATED ASTAR BUTTON CLICKED
+      elif self.intAStarButton.pressed(pos):
+        # Ask for anchor, heuristics, and weight
+        intForm = SequentialSelector()
+
+        # Run with the given weights and heuristics
+        if(intForm.weight1 >= 1 and intForm.weight2 >= 1):
+          heuristics = intForm.heuristicFunctions
+          n = len(heuristics)
+          with IntegratedAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, n, intForm.weight1, intForm.weight2, heuristics) as intAStar:
+            self.grid.resetAlgoCells()
+            found = intAStar.search()
+            if(found):
+              #self.grid.setAlgoValues(intAStar.cells[intAStar.endIndex])
+              self.grid.setPath(intAStar.getPath())
+            else:
+              messagebox.showinfo("Integrated AStar Results", "No path could be found to the goal.")
+
+          self.time = intAStar.time
+          self.write_info(self.clickedCell.X, self.clickedCell.Y)
+
         # Remove from memory
-        del seqForm
+        del intForm
 
           
       # Convert x/y screen coordinates to grid coordinates         
@@ -239,7 +261,7 @@ class GUI(object):
     self.weightedAStarButton = Button("Weighted A*", 12, Constants.WHITE, 180, 35, 1055, 325, Constants.LIGHT_BLUE, Constants.DARK_BLUE)        # Weighted A* button
     self.uniformCostButton = Button("Uniform Cost", 12, Constants.WHITE, 180, 35, 1055, 365, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
     self.seqAStarButton = Button("Sequential A*", 12, Constants.WHITE, 180, 35, 1055, 405, Constants.LIGHT_BLUE, Constants.DARK_BLUE)           # Sequential A* button
-    self.intAStarButton = Button("Integrated A*", 12, Constants.WHITE, 180, 35, 1055, 445, Constants.GREY, Constants.GREY)                      # Integrated A* button
+    self.intAStarButton = Button("Integrated A*", 12, Constants.WHITE, 180, 35, 1055, 445, Constants.LIGHT_BLUE, Constants.DARK_BLUE)           # Integrated A* button
     self.startGoalButton = Button("Start-Goal Pair", 12, Constants.WHITE, 180, 35, 1055, 520, Constants.PINK, Constants.DARK_PINK)              # Start-Goal Pair button
 
     # Add buttons to list

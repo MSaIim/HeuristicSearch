@@ -1,4 +1,6 @@
 import math, time
+import numpy as np
+import Utilities.Constants as Constants
 import Algorithms.Base.Formulas as Formulas
 from Algorithms.Base.ManySearch import ManySearch
 
@@ -6,6 +8,18 @@ from Algorithms.Base.ManySearch import ManySearch
 class SequentialAStar(ManySearch):
   def __init__(self, grid, start, goal, n, w1, w2, heuristics):
     super().__init__(grid, start, goal, n, w1, w2, heuristics)
+
+    # For benchmarks
+    self.nodeexpanded = np.array([0 for x in range(n)])
+
+    # Array of grids
+    self.cells = np.array([grid for x in range(n)])
+
+    # Array of closed lists of booleans
+    self.closedList = np.array([np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
+
+    # Array to keep track of sprimes
+    self.tracker = np.array([np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
 
 
   # Start the algoirthm. Searches for the best path based on the heuristic.
@@ -19,7 +33,9 @@ class SequentialAStar(ManySearch):
       self.cells[i][self.start.X, self.start.Y].Parent = None
       self.cells[i][self.goal.X, self.goal.Y].Parent = None
 
-      self.fringe[i].push(self.start, self.Key(self.start, i))
+      priority = self.Key(self.start, i)
+      self.cells[i][self.start.X, self.start.Y].Priority = priority
+      self.fringe[i].push(priority, self.start)
       self.openList[i][self.start.X, self.start.Y] = True
 
     # Run algorithm
@@ -68,6 +84,9 @@ class SequentialAStar(ManySearch):
     for sp in Formulas.Successors(s, self.grid):
       # Get the total cost from s to sp
       cost = self.cells[i][s.X, s.Y].G + Formulas.PathCost(s, sp)
+      
+      # Get the old priority for removal
+      old_priority = sp.Priority
 
       # Check if sprime was generated in ith search
       if (self.tracker[i][sp.X, sp.Y] == False):
@@ -83,7 +102,17 @@ class SequentialAStar(ManySearch):
         # Check if in closed list and fringe. If in fringe, remove it
         if (self.closedList[i][sp.X, sp.Y] == False):
           if (self.openList[i][sp.X, sp.Y] == True):
-            self.fringe[i].remove(sp)
+            self.fringe[i].remove((old_priority, sp))
 
           # Insert/Update sprime with new priority
-          self.fringe[i].push(sp, self.Key(sp, i))
+          priority = self.Key(sp, i)
+          self.cells[i][sp.X, sp.Y].Priority = priority
+          self.fringe[i].push(priority, sp)
+          self.openList[i][sp.X, sp.Y] = True
+
+
+  # Get the key for priority
+  def Key(self, s, i):
+    self.cells[i][s.X, s.Y].H = self.heuristics[i](s, self.goal)
+    self.cells[i][s.X, s.Y].F = self.cells[i][s.X, s.Y].G + self.cells[i][s.X, s.Y].H
+    return self.cells[i][s.X, s.Y].G + self.w1 * self.cells[i][s.X, s.Y].H
