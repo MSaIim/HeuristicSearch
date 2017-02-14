@@ -183,6 +183,9 @@ class GUI(object):
           self.time = seqAStar.time
           self.write_info(self.clickedCell.X, self.clickedCell.Y)
 
+        # Remove from memory
+        del seqForm
+
        # INTEGRATED ASTAR BUTTON CLICKED
       elif self.intAStarButton.pressed(pos):
         # Ask for anchor, heuristics, and weight
