@@ -6,7 +6,11 @@ from abc import ABC, abstractmethod
 # Abstract class ManySearch
 class ManySearch(ABC):
   def __init__(self, grid, start, goal, n, w1, w2, heuristics):
-    self.grid = grid
+    # Reset the grid
+    grid.resetAlgoCells()
+
+    # Initial setup
+    self.grid = grid.cells
     self.start = start
     self.goal = goal
     self.n = n
@@ -35,24 +39,33 @@ class ManySearch(ABC):
     searchPath = []
     append = searchPath.append
     done = False
+    cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
 
     # Get correct array
-    if(self.endIndex >= 0):
-      cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
-    else:
-      cell = self.cells[self.goal.X, self.goal.Y]
+    # if(self.endIndex >= 0):
+    #   cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
+    # else:
+    #   cell = self.cells[self.goal.X, self.goal.Y]
 
     # Trace path back to start
-    while done == False:
+    while cell is not self.start:
       append(cell)
+      cell = self.cells[self.endIndex][cell.X, cell.Y].Parent
 
-      if(cell == self.start):
-        done = True
+    # Assign f, g, h values
+    for row in range(Constants.ROWS):
+      for col in range(Constants.COLUMNS):
+        self.grid[row, col].F = self.cells[self.endIndex][row, col].F
+        self.grid[row, col].G = self.cells[self.endIndex][row, col].G
+        self.grid[row, col].H = self.cells[self.endIndex][row, col].H
 
-      cell = cell.Parent
-
-    # For benchmarks
     self.pathlength = self.cells[self.endIndex][self.goal.X, self.goal.Y].G
+
+    # # For benchmarks
+    # if(self.endIndex >= 0):
+    #   self.pathlength = self.cells[self.endIndex][self.goal.X, self.goal.Y].G
+    # else:
+    #   self.pathlength = self.cells[self.goal.X, self.goal.Y].G
 
     return searchPath
 

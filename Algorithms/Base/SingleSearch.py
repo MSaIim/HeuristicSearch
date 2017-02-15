@@ -6,7 +6,11 @@ from abc import ABC, abstractmethod
 # Abstract class Search
 class SingleSearch(ABC):
   def __init__(self, grid, start, goal):
-    self.grid = grid
+    # Reset the grid
+    grid.resetAlgoCells()
+
+    # Initial setup
+    self.grid = grid.cells
     self.start = start
     self.goal = goal
     self.time = 0

@@ -1,5 +1,6 @@
 import math, time
 import numpy as np
+from Grid.Cell import Cell
 import Utilities.Constants as Constants
 import Algorithms.Base.Formulas as Formulas
 from Algorithms.Base.ManySearch import ManySearch
@@ -13,7 +14,7 @@ class SequentialAStar(ManySearch):
     self.nodeexpanded = np.array([0 for x in range(n)])
 
     # Array of grids
-    self.cells = np.array([grid for x in range(n)])
+    self.cells = np.array([np.asmatrix([[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
 
     # Array of closed lists of booleans
     self.closedList = np.array([np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
@@ -28,13 +29,14 @@ class SequentialAStar(ManySearch):
 
     # Initial setup
     for i in range(self.n):
+      priority = self.Key(self.start, i)
+
       self.cells[i][self.start.X, self.start.Y].G = 0
       self.cells[i][self.goal.X, self.goal.Y].G = math.inf
       self.cells[i][self.start.X, self.start.Y].Parent = None
       self.cells[i][self.goal.X, self.goal.Y].Parent = None
-
-      priority = self.Key(self.start, i)
       self.cells[i][self.start.X, self.start.Y].Priority = priority
+
       self.fringe[i].push(priority, self.start)
       self.openList[i][self.start.X, self.start.Y] = True
 
@@ -53,6 +55,7 @@ class SequentialAStar(ManySearch):
           # G value of ith search process is further away than anchor
           else:
             s = self.fringe[i].pop()[1]
+            self.openList[i][s.X, s.Y] = False
             self.ExpandState(s, i)
             self.nodeexpanded[i] += 1
             self.closedList[i][s.X, s.Y] = True
@@ -69,6 +72,7 @@ class SequentialAStar(ManySearch):
           # Anchor priority is higher but G value is lower
           else:
             s = self.fringe[0].pop()[1]
+            self.openList[0][s.X, s.Y] = False
             self.ExpandState(s, 0)
             self.nodeexpanded[0] += 1
             self.closedList[0][s.X, s.Y] = True
@@ -82,11 +86,11 @@ class SequentialAStar(ManySearch):
   def ExpandState(self, s, i):
     # Get all the successors for s
     for sp in Formulas.Successors(s, self.grid):
-      # Get the total cost from s to sp
+      # Get cost
       cost = self.cells[i][s.X, s.Y].G + Formulas.PathCost(s, sp)
       
       # Get the old priority for removal
-      old_priority = sp.Priority
+      old_priority = self.cells[i][sp.X, sp.Y].Priority
 
       # Check if sprime was generated in ith search
       if (self.tracker[i][sp.X, sp.Y] == False):

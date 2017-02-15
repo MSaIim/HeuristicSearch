@@ -117,8 +117,7 @@ class GUI(object):
 
       # ASTAR BUTTON CLICKED
       elif self.astarButton.pressed(pos):
-        with AStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal) as astar:
-          self.grid.resetAlgoCells()
+        with AStar(self.grid, self.grid.currentStart, self.grid.currentGoal) as astar:
           found = astar.search()
           if(found):
             self.grid.setPath(astar.getPath())
@@ -135,8 +134,7 @@ class GUI(object):
 
         # Run with the given weight and heuristic
         if(heuForm.weight >= 1):
-          with WeightedAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, heuForm.heuristic, heuForm.weight) as weightedAStar:
-            self.grid.resetAlgoCells()
+          with WeightedAStar(self.grid, self.grid.currentStart, self.grid.currentGoal, heuForm.heuristic, heuForm.weight) as weightedAStar:
             found = weightedAStar.search()
             if(found):
               self.grid.setPath(weightedAStar.getPath())
@@ -151,8 +149,7 @@ class GUI(object):
 
       # UNIFORM COST BUTTON CLICKED
       elif self.uniformCostButton.pressed(pos):
-        with UniformCost(self.grid.cells, self.grid.currentStart, self.grid.currentGoal) as uniformCost:
-          self.grid.resetAlgoCells()
+        with UniformCost(self.grid, self.grid.currentStart, self.grid.currentGoal) as uniformCost:
           found = uniformCost.search()
           if(found):
             self.grid.setPath(uniformCost.getPath())
@@ -171,17 +168,16 @@ class GUI(object):
         if(seqForm.weight1 >= 1 and seqForm.weight2 >= 1):
           heuristics = seqForm.heuristicFunctions
           n = len(heuristics)
-          with SequentialAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, n, seqForm.weight1, seqForm.weight2, heuristics) as seqAStar:
-            self.grid.resetAlgoCells()
+
+          with SequentialAStar(self.grid, self.grid.currentStart, self.grid.currentGoal, n, seqForm.weight1, seqForm.weight2, heuristics) as seqAStar:
             found = seqAStar.search()
             if(found):
-              #self.grid.setAlgoValues(seqAStar.cells[seqAStar.endIndex])
               self.grid.setPath(seqAStar.getPath())
             else:
               messagebox.showinfo("Sequential AStar Results", "No path could be found to the goal.")
 
-          self.time = seqAStar.time
-          self.write_info(self.clickedCell.X, self.clickedCell.Y)
+            self.time = seqAStar.time
+            self.write_info(self.clickedCell.X, self.clickedCell.Y)
 
         # Remove from memory
         del seqForm
@@ -195,17 +191,16 @@ class GUI(object):
         if(intForm.weight1 >= 1 and intForm.weight2 >= 1):
           heuristics = intForm.heuristicFunctions
           n = len(heuristics)
-          with IntegratedAStar(self.grid.cells, self.grid.currentStart, self.grid.currentGoal, n, intForm.weight1, intForm.weight2, heuristics) as intAStar:
-            self.grid.resetAlgoCells()
+          with IntegratedAStar(self.grid, self.grid.currentStart, self.grid.currentGoal, n, intForm.weight1, intForm.weight2, heuristics) as intAStar:
             found = intAStar.search()
             if(found):
-              #self.grid.setAlgoValues(intAStar.cells[intAStar.endIndex])
-              self.grid.setPath(intAStar.getPath())
+              #self.grid.setPath(intAStar.getPath())
+              messagebox.showinfo("Integrated AStar Results", "Path found!")
             else:
               messagebox.showinfo("Integrated AStar Results", "No path could be found to the goal.")
 
-          self.time = intAStar.time
-          self.write_info(self.clickedCell.X, self.clickedCell.Y)
+            self.time = intAStar.time
+            self.write_info(self.clickedCell.X, self.clickedCell.Y)
 
         # Remove from memory
         del intForm
@@ -264,7 +259,7 @@ class GUI(object):
     self.weightedAStarButton = Button("Weighted A*", 12, Constants.WHITE, 180, 35, 1055, 325, Constants.LIGHT_BLUE, Constants.DARK_BLUE)        # Weighted A* button
     self.uniformCostButton = Button("Uniform Cost", 12, Constants.WHITE, 180, 35, 1055, 365, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
     self.seqAStarButton = Button("Sequential A*", 12, Constants.WHITE, 180, 35, 1055, 405, Constants.LIGHT_BLUE, Constants.DARK_BLUE)           # Sequential A* button
-    self.intAStarButton = Button("Integrated A*", 12, Constants.WHITE, 180, 35, 1055, 445, Constants.LIGHT_BLUE, Constants.DARK_BLUE)           # Integrated A* button
+    self.intAStarButton = Button("Integrated A*", 12, Constants.WHITE, 180, 35, 1055, 445, Constants.GREY, Constants.GREY)                      # Integrated A* button
     self.startGoalButton = Button("Start-Goal Pair", 12, Constants.WHITE, 180, 35, 1055, 520, Constants.PINK, Constants.DARK_PINK)              # Start-Goal Pair button
 
     # Add buttons to list

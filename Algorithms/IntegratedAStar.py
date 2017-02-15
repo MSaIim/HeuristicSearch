@@ -14,7 +14,7 @@ class IntegratedAStar(ManySearch):
     self.nodeExInadm = 0
 
     # Array of grids
-    self.cells = grid
+    self.cells = self.grid
 
     # Closed list for anchor and another for inadmissible heuristics
     self.closedAnchor = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
@@ -31,6 +31,8 @@ class IntegratedAStar(ManySearch):
     # Initial setup
     self.cells[self.start.X, self.start.Y].G = 0
     self.cells[self.goal.X, self.goal.Y].G = math.inf
+    self.cells[self.start.X, self.start.Y].Parent = None
+    self.cells[self.goal.X, self.goal.Y].Parent = None
 
     for i in range(self.n):
       self.fringe[i].push(self.Key(self.start, i), self.start)
@@ -38,7 +40,7 @@ class IntegratedAStar(ManySearch):
 
     # Run algorithm
     while self.fringe[0].peek()[0] < math.inf:
-       # Run search in a round-robin manner for the corresponding queue
+      # Run search in a round-robin manner for the corresponding queue
       for i in range(1, self.n):
         # Check if path is found using non-achor search processes
         if (self.fringe[i].peek()[0] <= self.w2 * self.fringe[0].peek()[0]):
@@ -77,34 +79,32 @@ class IntegratedAStar(ManySearch):
   # Expand the state
   def ExpandState(self, s, i):
     # Remove s from all fringes
-    s_priority = self.Key(s, i) # Get old s priority
+    s_tuple = (self.Key(s, i), s) # Get old s priority
     for i in range(self.n):
-      self.fringe[i].remove((s_priority, s))
+      self.fringe[i].remove(s_tuple)
       self.openList[i][s.X, s.Y] = False
-      print("1")
 
       # Get all the successors for s
       for sp in Formulas.Successors(s, self.grid):
         # Get the total cost from s to sp
         cost = self.cells[s.X, s.Y].G + Formulas.PathCost(s, sp)
-        print("2")
+
         # Check if sprime was generated
         if (self.tracker[sp.X, sp.Y] == False):
           self.cells[sp.X, sp.Y].G = math.inf
           self.cells[sp.X, sp.Y].Parent = None
-          print("3")
+          self.tracker[sp.X, sp.Y] = True
 
         # Good path found, set the parent and G value
-        sp_priority = self.Key(sp, i) # Get old sprime priority
+        sp_tuple = (self.Key(sp, i), sp) # Get old sprime priority
         if(self.cells[sp.X, sp.Y].G > cost):
           self.cells[sp.X, sp.Y].G = cost
           self.cells[sp.X, sp.Y].Parent = s
-          print("4")
 
           # Check if in closed anchor list and anchor fringe.
           if (self.closedAnchor[sp.X, sp.Y] == False):
             if (self.openList[0][sp.X, sp.Y] == True):
-              self.fringe[0].remove((sp_priority, sp))
+              self.fringe[0].remove(sp_tuple)
 
             # Insert/Update sprime with new priority
             self.fringe[0].push(self.Key(sp, 0), sp)
@@ -115,8 +115,7 @@ class IntegratedAStar(ManySearch):
               for i in range(1, self.n):
                 if (self.Key(sp, i) <= self.w2 * self.Key(sp, 0)):
                   if (self.openList[i][sp.X, sp.Y] == True):
-                    self.fringe[i].remove((sp_priority, sp))
-                    print("6")
+                    self.fringe[i].remove(sp_tuple)
 
                   # Insert/Update sprime with new priority
                   self.fringe[i].push(self.Key(sp, i), sp)
@@ -126,3 +125,4 @@ class IntegratedAStar(ManySearch):
   # Get the key for priority
   def Key(self, s, i):
     return self.cells[s.X, s.Y].G + self.w1 * self.heuristics[i](s, self.goal)
+    
