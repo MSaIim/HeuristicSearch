@@ -1,5 +1,6 @@
 import math, time
 import numpy as np
+from Grid.Cell import AlgoCell
 import Utilities.Constants as Constants
 import Algorithms.Base.Formulas as Formulas
 from Algorithms.Base.ManySearch import ManySearch
@@ -14,7 +15,7 @@ class IntegratedAStar(ManySearch):
     self.nodeExInadm = 0
 
     # Array of grids
-    self.cells = self.grid
+    self.cells = np.asmatrix([[AlgoCell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
     # Closed list for anchor and another for inadmissible heuristics
     self.closedAnchor = np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
@@ -52,6 +53,7 @@ class IntegratedAStar(ManySearch):
           # G value of ith search process is further away than anchor
           else:
             s = self.fringe[i].pop()[1]
+            self.openList[i][s.X, s.Y] = False
             self.ExpandState(s, i)
             self.nodeExInadm += 1
             self.closedInadm[s.X, s.Y] = True
@@ -67,6 +69,7 @@ class IntegratedAStar(ManySearch):
           # Anchor priority is higher but G value is lower
           else:
             s = self.fringe[0].pop()[1]
+            self.openList[0][s.X, s.Y] = False
             self.ExpandState(s, 0)
             self.nodeExAnchor += 1
             self.closedAnchor[s.X, s.Y] = True
@@ -124,5 +127,31 @@ class IntegratedAStar(ManySearch):
 
   # Get the key for priority
   def Key(self, s, i):
-    return self.cells[s.X, s.Y].G + self.w1 * self.heuristics[i](s, self.goal)
+    self.cells[s.X, s.Y].H = self.heuristics[i](s, self.goal)
+    self.cells[s.X, s.Y].F = self.cells[s.X, s.Y].G + self.cells[s.X, s.Y].H
+    return self.cells[s.X, s.Y].G + self.w1 * self.cells[s.X, s.Y].H
     
+
+  # Get the path from the start to the goal
+  def getPath(self):
+    searchPath = []
+    append = searchPath.append
+    done = False
+    cell = self.cells[self.goal.X, self.goal.Y]
+
+    # Trace path back to start
+    while cell is not self.start:
+      append(cell)
+      cell = self.cells[cell.X, cell.Y].Parent
+
+    # Assign f, g, h values
+    for row in range(Constants.ROWS):
+      for col in range(Constants.COLUMNS):
+        self.grid[row, col].F = self.cells[row, col].F
+        self.grid[row, col].G = self.cells[row, col].G
+        self.grid[row, col].H = self.cells[row, col].H
+
+    # For benchmarks
+    self.pathlength = self.cells[self.goal.X, self.goal.Y].G
+
+    return searchPath

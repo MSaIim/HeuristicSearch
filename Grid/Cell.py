@@ -146,3 +146,18 @@ class Cell(object):
 
     # Draw the cell
     pygame.draw.rect(surface, color, self.rectPos)
+
+
+# /*\ =======================================================================
+# |*| ALGO CELL CLASS
+# |*|   - Lightweight version of the cell to optimize algorithms
+# \*/ =======================================================================
+class AlgoCell(object):
+  def __init__(self, x, y):
+    self.X = x
+    self.Y = y
+    self.F = 0
+    self.G = 0
+    self.H = 0
+    self.Priority = 0
+    self.Parent = None

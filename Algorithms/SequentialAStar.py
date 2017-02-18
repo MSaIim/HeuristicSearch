@@ -1,6 +1,6 @@
 import math, time
 import numpy as np
-from Grid.Cell import Cell
+from Grid.Cell import AlgoCell
 import Utilities.Constants as Constants
 import Algorithms.Base.Formulas as Formulas
 from Algorithms.Base.ManySearch import ManySearch
@@ -10,16 +10,13 @@ class SequentialAStar(ManySearch):
   def __init__(self, grid, start, goal, n, w1, w2, heuristics):
     super().__init__(grid, start, goal, n, w1, w2, heuristics)
 
-    # For benchmarks
+    # Initial setup
+    self.endIndex = 0
     self.nodeexpanded = np.array([0 for x in range(n)])
 
-    # Array of grids
-    self.cells = np.array([np.asmatrix([[Cell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
-
-    # Array of closed lists of booleans
+    # Cell list of 2D arrays, Closed list of 2D arrays, Sprime tracker list of 2D arrays
+    self.cells = np.array([np.asmatrix([[AlgoCell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
     self.closedList = np.array([np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
-
-    # Array to keep track of sprimes
     self.tracker = np.array([np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
 
 
@@ -120,3 +117,28 @@ class SequentialAStar(ManySearch):
     self.cells[i][s.X, s.Y].H = self.heuristics[i](s, self.goal)
     self.cells[i][s.X, s.Y].F = self.cells[i][s.X, s.Y].G + self.cells[i][s.X, s.Y].H
     return self.cells[i][s.X, s.Y].G + self.w1 * self.cells[i][s.X, s.Y].H
+
+
+  # Get the path from the start to the goal
+  def getPath(self):
+    searchPath = []
+    append = searchPath.append
+    done = False
+    cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
+
+    # Trace path back to start
+    while cell is not self.start:
+      append(cell)
+      cell = self.cells[self.endIndex][cell.X, cell.Y].Parent
+
+    # Assign f, g, h values
+    for row in range(Constants.ROWS):
+      for col in range(Constants.COLUMNS):
+        self.grid[row, col].F = self.cells[self.endIndex][row, col].F
+        self.grid[row, col].G = self.cells[self.endIndex][row, col].G
+        self.grid[row, col].H = self.cells[self.endIndex][row, col].H
+
+    # For benchmarks
+    self.pathlength = self.cells[self.endIndex][self.goal.X, self.goal.Y].G
+
+    return searchPath

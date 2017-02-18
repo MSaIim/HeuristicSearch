@@ -137,13 +137,13 @@ class WeightedSelector(Form):
 # |*|         and the other four the user may choose from. In addition,
 # |*|         two weights can be chosen.
 # \*/ =======================================================================
-class SequentialSelector(Form):
+class SeqIntSelector(Form):
   anchors = ['Manhattan Distance', 'Euclidean Distance']
   heuristics = ['None', 'AStar (Given Heuristic)', 'Euclidean Distance', 'Chebyshev Distance', 'Diagonal Distance']
 
   # Construct the window
   def __init__(self):
-    super().__init__("Sequential A* Setup", 400, 370)
+    super().__init__("Sequential/Integrated A* Setup", 400, 370)
     self.weight1 = 0
     self.weight2 = 0
 

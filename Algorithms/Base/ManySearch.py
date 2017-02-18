@@ -18,7 +18,6 @@ class ManySearch(ABC):
     self.w2 = w2
     self.heuristics = heuristics
     self.time = 0
-    self.endIndex = -1
 
     # For benchmarks
     self.pathlength = 0
@@ -32,42 +31,6 @@ class ManySearch(ABC):
   @abstractmethod
   def search(self):
     pass
-    
-
-  # Get the path from the start to the goal
-  def getPath(self):
-    searchPath = []
-    append = searchPath.append
-    done = False
-    cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
-
-    # Get correct array
-    # if(self.endIndex >= 0):
-    #   cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
-    # else:
-    #   cell = self.cells[self.goal.X, self.goal.Y]
-
-    # Trace path back to start
-    while cell is not self.start:
-      append(cell)
-      cell = self.cells[self.endIndex][cell.X, cell.Y].Parent
-
-    # Assign f, g, h values
-    for row in range(Constants.ROWS):
-      for col in range(Constants.COLUMNS):
-        self.grid[row, col].F = self.cells[self.endIndex][row, col].F
-        self.grid[row, col].G = self.cells[self.endIndex][row, col].G
-        self.grid[row, col].H = self.cells[self.endIndex][row, col].H
-
-    self.pathlength = self.cells[self.endIndex][self.goal.X, self.goal.Y].G
-
-    # # For benchmarks
-    # if(self.endIndex >= 0):
-    #   self.pathlength = self.cells[self.endIndex][self.goal.X, self.goal.Y].G
-    # else:
-    #   self.pathlength = self.cells[self.goal.X, self.goal.Y].G
-
-    return searchPath
 
 
   # For use with the "as" statement in the "with" clause
