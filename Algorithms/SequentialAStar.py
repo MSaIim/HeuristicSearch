@@ -7,8 +7,8 @@ from Algorithms.Base.ManySearch import ManySearch
 
 
 class SequentialAStar(ManySearch):
-  def __init__(self, grid, start, goal, n, w1, w2, heuristics):
-    super().__init__(grid, start, goal, n, w1, w2, heuristics)
+  def __init__(self, grid, n, w1, w2, heuristics, i=-1):
+    super().__init__(grid, n, w1, w2, heuristics, i)
 
     # Initial setup
     self.endIndex = 0
@@ -46,6 +46,7 @@ class SequentialAStar(ManySearch):
           if (self.cells[i][self.goal.X, self.goal.Y].G <= self.fringe[i].peek()[0]):
             if (self.cells[i][self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
+              self.pathlength = self.cells[i][self.goal.X, self.goal.Y].G
               self.endIndex = i
               return True
 
@@ -63,6 +64,7 @@ class SequentialAStar(ManySearch):
           if (self.cells[0][self.goal.X, self.goal.Y].G <= self.fringe[0].peek()[0]):
             if (self.cells[0][self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
+              self.pathlength = self.cells[0][self.goal.X, self.goal.Y].G
               self.endIndex = 0
               return True
 
@@ -123,7 +125,6 @@ class SequentialAStar(ManySearch):
   def getPath(self):
     searchPath = []
     append = searchPath.append
-    done = False
     cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
 
     # Trace path back to start

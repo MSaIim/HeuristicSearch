@@ -5,15 +5,16 @@ from abc import ABC, abstractmethod
 
 # Abstract class Search
 class SingleSearch(ABC):
-  def __init__(self, grid, start, goal):
+  def __init__(self, grid, heuristic, i):
     # Reset the grid
     grid.resetAlgoCells()
 
     # Initial setup
     self.grid = grid.cells
-    self.start = start
-    self.goal = goal
+    self.Heuristic = heuristic
     self.time = 0
+    self.start = grid.currentStart if i == -1 else grid.startLocations[i]
+    self.goal = grid.currentGoal if i == -1 else grid.goalLocations[i]
 
     # For benchmarks
     self.pathlength = 0
@@ -47,8 +48,6 @@ class SingleSearch(ABC):
 
       cell = cell.Parent
 
-    # For benchmarks
-    self.pathlength = self.goal.G
     return searchPath
 
 

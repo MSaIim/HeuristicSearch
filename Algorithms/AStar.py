@@ -4,8 +4,8 @@ from Algorithms.Base.SingleSearch import SingleSearch
 
 
 class AStar(SingleSearch):
-  def __init__(self, grid, start, goal):
-    super().__init__(grid, start, goal)
+  def __init__(self, grid, heuristic, i=-1):
+    super().__init__(grid, heuristic, i)
     
 
   # Start the algoirthm. Searches for the best path based on the heuristic.
@@ -14,7 +14,7 @@ class AStar(SingleSearch):
 
     # Set distance from start and set parent to itself. Push to the heap with heuristic as priority
     self.start.G = 0
-    self.start.H = self.Heuristic(self.start)
+    self.start.H = self.Heuristic(self.start, self.goal)
     self.start.F = self.start.G + self.start.H
     self.start.Parent = self.start
     self.start.Priority = self.start.F
@@ -30,6 +30,7 @@ class AStar(SingleSearch):
       # Goal found, stop the loop
       if(s == self.goal):
         self.time = int(round(time.time() * 1000)) - startTime
+        self.pathlength = self.goal.G
         return True
 
       # Add it to visited list
@@ -61,7 +62,7 @@ class AStar(SingleSearch):
       old_priority = sprime.Priority
 
       # Set all the updated values for cell
-      sprime.H = self.Heuristic(sprime)
+      sprime.H = self.Heuristic(sprime, self.goal)
       sprime.G = cost
       sprime.F = sprime.G + sprime.H
       sprime.Parent = s 
@@ -74,11 +75,3 @@ class AStar(SingleSearch):
       sprime.Priority = sprime.F
       self.fringe.push(sprime.Priority, sprime)
       self.openList[sprime.X, sprime.Y] = True
-
-
-  # Heuristic to guide the A* along the optimal path
-  def Heuristic(self, s):
-    min_XY = min(abs(s.X - self.goal.X), abs(s.Y - self.goal.Y))
-    max_XY = max(abs(s.X - self.goal.X), abs(s.Y - self.goal.Y))
-
-    return (1.41421356237 * min_XY) + max_XY - min_XY

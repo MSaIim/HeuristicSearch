@@ -1,5 +1,4 @@
 import pygame, os
-import Algorithms.Base.Formulas as Formulas
 import Utilities.Constants as Constants
 from tkinter import messagebox
 from Grid.Grid import Grid
@@ -9,7 +8,7 @@ from Algorithms.WeightedAStar import WeightedAStar
 from Algorithms.UniformCost import UniformCost
 from Algorithms.SequentialAStar import SequentialAStar
 from Algorithms.IntegratedAStar import IntegratedAStar
-from Utilities.Selectors import WeightedSelector, StartGoalSelector, SeqIntSelector
+from Utilities.Selectors import AStarSelector, WeightedSelector, StartGoalSelector, SeqIntSelector
 
 
 class GUI(object):
@@ -24,7 +23,7 @@ class GUI(object):
     # Set the screen size, position, title, and icon
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     self.screen = pygame.display.set_mode(Constants.WINDOW_SIZE)
-    self.gridSurface = pygame.Surface((160.2 * (Constants.WIDTH + Constants.MARGIN), 120.2 * (Constants.HEIGHT + Constants.MARGIN)))
+    self.gridSurface = pygame.Surface((Constants.COLUMNS * (Constants.WIDTH + Constants.MARGIN), Constants.ROWS * (Constants.HEIGHT + Constants.MARGIN)))
     pygame.display.set_caption("Heuristic Search")
     pygame.display.set_icon(pygame.image.load('Resources/icon.png'))
 
@@ -117,15 +116,19 @@ class GUI(object):
 
       # ASTAR BUTTON CLICKED
       elif self.astarButton.pressed(pos):
-        with AStar(self.grid, self.grid.currentStart, self.grid.currentGoal) as astar:
-          found = astar.search()
-          if(found):
-            self.grid.setPath(astar.getPath())
-          else:
-            messagebox.showinfo("AStar Results", "No path could be found to the goal.")
+        # Ask for heuristic
+        astarForm = AStarSelector()
 
-          self.time = astar.time
-          self.write_info(self.clickedCell.X, self.clickedCell.Y)
+        if(astarForm.heuristic != None):
+          with AStar(self.grid, astarForm.heuristic) as astar:
+            found = astar.search()
+            if(found):
+              self.grid.setPath(astar.getPath())
+            else:
+              messagebox.showinfo("AStar Results", "No path could be found to the goal.")
+
+            self.time = astar.time
+            self.write_info(self.clickedCell.X, self.clickedCell.Y)
         
       # WEIGHTED ASTAR BUTTON CLICKED
       elif self.weightedAStarButton.pressed(pos):
@@ -134,7 +137,7 @@ class GUI(object):
 
         # Run with the given weight and heuristic
         if(heuForm.weight >= 1):
-          with WeightedAStar(self.grid, self.grid.currentStart, self.grid.currentGoal, heuForm.heuristic, heuForm.weight) as weightedAStar:
+          with WeightedAStar(self.grid, heuForm.heuristic, heuForm.weight) as weightedAStar:
             found = weightedAStar.search()
             if(found):
               self.grid.setPath(weightedAStar.getPath())
@@ -149,7 +152,7 @@ class GUI(object):
 
       # UNIFORM COST BUTTON CLICKED
       elif self.uniformCostButton.pressed(pos):
-        with UniformCost(self.grid, self.grid.currentStart, self.grid.currentGoal) as uniformCost:
+        with UniformCost(self.grid) as uniformCost:
           found = uniformCost.search()
           if(found):
             self.grid.setPath(uniformCost.getPath())
@@ -169,7 +172,7 @@ class GUI(object):
           heuristics = seqForm.heuristicFunctions
           n = len(heuristics)
 
-          with SequentialAStar(self.grid, self.grid.currentStart, self.grid.currentGoal, n, seqForm.weight1, seqForm.weight2, heuristics) as seqAStar:
+          with SequentialAStar(self.grid, n, seqForm.weight1, seqForm.weight2, heuristics) as seqAStar:
             found = seqAStar.search()
             if(found):
               self.grid.setPath(seqAStar.getPath())
@@ -192,7 +195,7 @@ class GUI(object):
           heuristics = intForm.heuristicFunctions
           n = len(heuristics)
 
-          with IntegratedAStar(self.grid, self.grid.currentStart, self.grid.currentGoal, n, intForm.weight1, intForm.weight2, heuristics) as intAStar:
+          with IntegratedAStar(self.grid, n, intForm.weight1, intForm.weight2, heuristics) as intAStar:
             found = intAStar.search()
             if(found):
               self.grid.setPath(intAStar.getPath())
@@ -247,15 +250,13 @@ class GUI(object):
 
   # Setup the static elements
   def setup_static(self):
-    # Reset info box
-    self.heuristic = Formulas.ManhattanDistance
     self.write_info(self.grid.currentStart.X, self.grid.currentStart.Y)
 
     # Buttons (text, text_color, length, height, x_pos, y_pos, btn_color, hover_color)
     self.reloadButton = Button("Regenerate Map", 14, Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)                  # Reload button
     self.saveButton = Button("Save Map", 7, Constants.WHITE, 110, 40, 1150, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                     # Save button
     self.loadButton = Button("Load Map", 7, Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                     # Load button
-    self.astarButton = Button("AStar [Given Heuristic]", 12, Constants.WHITE, 180, 35, 1055, 285, Constants.LIGHT_BLUE, Constants.DARK_BLUE)    # AStar button
+    self.astarButton = Button("AStar", 12, Constants.WHITE, 180, 35, 1055, 285, Constants.LIGHT_BLUE, Constants.DARK_BLUE)    # AStar button
     self.weightedAStarButton = Button("Weighted A*", 12, Constants.WHITE, 180, 35, 1055, 325, Constants.LIGHT_BLUE, Constants.DARK_BLUE)        # Weighted A* button
     self.uniformCostButton = Button("Uniform Cost", 12, Constants.WHITE, 180, 35, 1055, 365, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
     self.seqAStarButton = Button("Sequential A*", 12, Constants.WHITE, 180, 35, 1055, 405, Constants.LIGHT_BLUE, Constants.DARK_BLUE)           # Sequential A* button

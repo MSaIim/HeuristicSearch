@@ -53,8 +53,12 @@ class AlgoRunner(object):
 
   # Run all the tests
   def runAll(self):
-    self.astar()
     self.uniformcost()
+    self.astarGiven()
+    self.astarManhattan()
+    self.astarEuclidean()
+    self.astarDiagonal()
+    self.astarChebyshev()
     self.weightedAStarManhattan1()
     self.weightedAStarManhattan2()
     self.weightedAStarEuclidean1()
@@ -83,10 +87,10 @@ class AlgoRunner(object):
 
     # Get values from other maps, if any
     for num in range(1, len(self.mapList)):
-      timeAvgTotal.append(self.avgTime[index+10*num])
-      pathAvgTotal.append(self.avgPath[index+10*num])
-      nodeAvgTotal.append(self.avgNode[index+10*num])
-      memAvgTotal.append(self.avgMem[index+10*num])
+      timeAvgTotal.append(self.avgTime[index+14*num])
+      pathAvgTotal.append(self.avgPath[index+14*num])
+      nodeAvgTotal.append(self.avgNode[index+14*num])
+      memAvgTotal.append(self.avgMem[index+14*num])
 
     # Average them
     self.avgAllTime = sum(timeAvgTotal) / len(timeAvgTotal)
@@ -95,116 +99,102 @@ class AlgoRunner(object):
     self.avgAllMem = sum(memAvgTotal) / len(memAvgTotal)
 
 
-  # AStar algorithm with given heuristic
-  def astar(self):
-    for i in range(10):
-      with AStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i]) as astar:
-        self.grid.resetAlgoCells()
-        found = astar.search()
-        if(found):
-          self.grid.setPath(astar.getPath())
-          self.time.append(astar.time)
-          self.pathlength.append(astar.pathlength)
-          self.nodeexpanded.append(astar.nodeexpanded)
-          self.memreqs.append(asizeof(astar) / 1000)
-
-    self.calculateAverage(0)
-    self.printDot()
-
-
   # Uniform Cost Search algorithm
   def uniformcost(self):
     for i in range(10):
-      with UniformCost(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i]) as uniformCost:
-        self.grid.resetAlgoCells()
+      with UniformCost(self.grid, i) as uniformCost:
         found = uniformCost.search()
         if(found):
-          self.grid.setPath(uniformCost.getPath())
           self.time.append(uniformCost.time)
           self.pathlength.append(uniformCost.pathlength)
           self.nodeexpanded.append(uniformCost.nodeexpanded)
           self.memreqs.append(asizeof(uniformCost) / 1000)
 
+    self.calculateAverage(0)
+    self.printDot()
+
+
+  # AStar algorithm with given heuristic
+  def astarGiven(self):
+    for i in range(10):
+      with AStar(self.grid, Formulas.AStarHeuristic, i) as astar:
+        found = astar.search()
+        if(found):
+          self.time.append(astar.time)
+          self.pathlength.append(astar.pathlength)
+          self.nodeexpanded.append(astar.nodeexpanded)
+          self.memreqs.append(asizeof(astar) / 1000)
+
     self.calculateAverage(1)
+    self.printDot()
+
+
+  # AStar algorithm with manhattan heuristic
+  def astarManhattan(self):
+    for i in range(10):
+      with AStar(self.grid, Formulas.ManhattanDistance, i) as astar:
+        found = astar.search()
+        if(found):
+          self.time.append(astar.time)
+          self.pathlength.append(astar.pathlength)
+          self.nodeexpanded.append(astar.nodeexpanded)
+          self.memreqs.append(asizeof(astar) / 1000)
+
+    self.calculateAverage(2)
+    self.printDot()
+
+
+  # AStar algorithm with euclidean heuristic
+  def astarEuclidean(self):
+    for i in range(10):
+      with AStar(self.grid, Formulas.EuclideanDistance, i) as astar:
+        found = astar.search()
+        if(found):
+          self.time.append(astar.time)
+          self.pathlength.append(astar.pathlength)
+          self.nodeexpanded.append(astar.nodeexpanded)
+          self.memreqs.append(asizeof(astar) / 1000)
+
+    self.calculateAverage(3)
+    self.printDot()
+
+
+  # AStar algorithm with diagonal heuristic
+  def astarDiagonal(self):
+    for i in range(10):
+      with AStar(self.grid, Formulas.DiagonalDistance, i) as astar:
+        found = astar.search()
+        if(found):
+          self.time.append(astar.time)
+          self.pathlength.append(astar.pathlength)
+          self.nodeexpanded.append(astar.nodeexpanded)
+          self.memreqs.append(asizeof(astar) / 1000)
+
+    self.calculateAverage(4)
+    self.printDot()
+
+
+  # AStar algorithm with diagonal heuristic
+  def astarChebyshev(self):
+    for i in range(10):
+      with AStar(self.grid, Formulas.ChebyshevDistance, i) as astar:
+        found = astar.search()
+        if(found):
+          self.time.append(astar.time)
+          self.pathlength.append(astar.pathlength)
+          self.nodeexpanded.append(astar.nodeexpanded)
+          self.memreqs.append(asizeof(astar) / 1000)
+
+    self.calculateAverage(5)
     self.printDot()
 
 
   # Weighted AStar algorithm using Manhattan heuristic with a weight of 1.25
   def weightedAStarManhattan1(self):
     for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.ManhattanDistance, self.weight1) as weightedAStar:
-        self.grid.resetAlgoCells()
+      with WeightedAStar(self.grid, Formulas.ManhattanDistance, self.weight1, i) as weightedAStar:
         found = weightedAStar.search()
         if(found):
-          self.grid.setPath(weightedAStar.getPath())
-          self.time.append(weightedAStar.time)
-          self.pathlength.append(weightedAStar.pathlength)
-          self.nodeexpanded.append(weightedAStar.nodeexpanded)
-          self.memreqs.append(asizeof(weightedAStar) / 1000)
-
-    self.calculateAverage(2)
-    self.printDot()
-
-
-  # Weighted AStar algorithm using Manhattan heuristic with a weight of 2.0
-  def weightedAStarManhattan2(self):
-    for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.ManhattanDistance, self.weight2) as weightedAStar:
-        self.grid.resetAlgoCells()
-        found = weightedAStar.search()
-        if(found):
-          self.grid.setPath(weightedAStar.getPath())
-          self.time.append(weightedAStar.time)
-          self.pathlength.append(weightedAStar.pathlength)
-          self.nodeexpanded.append(weightedAStar.nodeexpanded)
-          self.memreqs.append(asizeof(weightedAStar) / 1000)
-
-    self.calculateAverage(3)
-    self.printDot()
-
-
-  # Weighted AStar algorithm using Euclidean heuristic with a weight of 1.25
-  def weightedAStarEuclidean1(self):
-    for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.EuclideanDistance, self.weight1) as weightedAStar:
-        self.grid.resetAlgoCells()
-        found = weightedAStar.search()
-        if(found):
-          self.grid.setPath(weightedAStar.getPath())
-          self.time.append(weightedAStar.time)
-          self.pathlength.append(weightedAStar.pathlength)
-          self.nodeexpanded.append(weightedAStar.nodeexpanded)
-          self.memreqs.append(asizeof(weightedAStar) / 1000)
-
-    self.calculateAverage(4)
-    self.printDot()
-
-
-  # Weighted AStar algorithm using Euclidean heuristic with a weight of 2.0
-  def weightedAStarEuclidean2(self):
-    for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.EuclideanDistance, self.weight2) as weightedAStar:
-        self.grid.resetAlgoCells()
-        found = weightedAStar.search()
-        if(found):
-          self.grid.setPath(weightedAStar.getPath())
-          self.time.append(weightedAStar.time)
-          self.pathlength.append(weightedAStar.pathlength)
-          self.nodeexpanded.append(weightedAStar.nodeexpanded)
-          self.memreqs.append(asizeof(weightedAStar) / 1000)
-
-    self.calculateAverage(5)
-    self.printDot()
-
-
-  # Weighted AStar algorithm using Diagonal heuristic with a weight of 1.25
-  def weightedAStarDiagonal1(self):
-    for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.DiagonalDistance, self.weight1) as weightedAStar:
-        self.grid.resetAlgoCells()
-        found = weightedAStar.search()
-        if(found):
-          self.grid.setPath(weightedAStar.getPath())
           self.time.append(weightedAStar.time)
           self.pathlength.append(weightedAStar.pathlength)
           self.nodeexpanded.append(weightedAStar.nodeexpanded)
@@ -214,14 +204,12 @@ class AlgoRunner(object):
     self.printDot()
 
 
-  # Weighted AStar algorithm using Diagonal heuristic with a weight of 2.0
-  def weightedAStarDiagonal2(self):
+  # Weighted AStar algorithm using Manhattan heuristic with a weight of 2.0
+  def weightedAStarManhattan2(self):
     for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.DiagonalDistance, self.weight2) as weightedAStar:
-        self.grid.resetAlgoCells()
+      with WeightedAStar(self.grid, Formulas.ManhattanDistance, self.weight2, i) as weightedAStar:
         found = weightedAStar.search()
         if(found):
-          self.grid.setPath(weightedAStar.getPath())
           self.time.append(weightedAStar.time)
           self.pathlength.append(weightedAStar.pathlength)
           self.nodeexpanded.append(weightedAStar.nodeexpanded)
@@ -231,14 +219,12 @@ class AlgoRunner(object):
     self.printDot()
 
 
-  # Weighted AStar algorithm using Chebyshev heuristic with a weight of 1.25
-  def weightedAStarChebyshev1(self):
+  # Weighted AStar algorithm using Euclidean heuristic with a weight of 1.25
+  def weightedAStarEuclidean1(self):
     for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.ChebyshevDistance, self.weight1) as weightedAStar:
-        self.grid.resetAlgoCells()
+      with WeightedAStar(self.grid, Formulas.EuclideanDistance, self.weight1, i) as weightedAStar:
         found = weightedAStar.search()
         if(found):
-          self.grid.setPath(weightedAStar.getPath())
           self.time.append(weightedAStar.time)
           self.pathlength.append(weightedAStar.pathlength)
           self.nodeexpanded.append(weightedAStar.nodeexpanded)
@@ -248,18 +234,76 @@ class AlgoRunner(object):
     self.printDot()
 
 
-  # Weighted AStar algorithm using Chebyshev heuristic with a weight of 2.0
-  def weightedAStarChebyshev2(self):
+  # Weighted AStar algorithm using Euclidean heuristic with a weight of 2.0
+  def weightedAStarEuclidean2(self):
     for i in range(10):
-      with WeightedAStar(self.grid.cells, self.grid.startLocations[i], self.grid.goalLocations[i], Formulas.ChebyshevDistance, self.weight2) as weightedAStar:
-        self.grid.resetAlgoCells()
+      with WeightedAStar(self.grid, Formulas.EuclideanDistance, self.weight2, i) as weightedAStar:
         found = weightedAStar.search()
         if(found):
-          self.grid.setPath(weightedAStar.getPath())
           self.time.append(weightedAStar.time)
           self.pathlength.append(weightedAStar.pathlength)
           self.nodeexpanded.append(weightedAStar.nodeexpanded)
           self.memreqs.append(asizeof(weightedAStar) / 1000)
 
     self.calculateAverage(9)
+    self.printDot()
+
+
+  # Weighted AStar algorithm using Diagonal heuristic with a weight of 1.25
+  def weightedAStarDiagonal1(self):
+    for i in range(10):
+      with WeightedAStar(self.grid, Formulas.DiagonalDistance, self.weight1, i) as weightedAStar:
+        found = weightedAStar.search()
+        if(found):
+          self.time.append(weightedAStar.time)
+          self.pathlength.append(weightedAStar.pathlength)
+          self.nodeexpanded.append(weightedAStar.nodeexpanded)
+          self.memreqs.append(asizeof(weightedAStar) / 1000)
+
+    self.calculateAverage(10)
+    self.printDot()
+
+
+  # Weighted AStar algorithm using Diagonal heuristic with a weight of 2.0
+  def weightedAStarDiagonal2(self):
+    for i in range(10):
+      with WeightedAStar(self.grid, Formulas.DiagonalDistance, self.weight2, i) as weightedAStar:
+        found = weightedAStar.search()
+        if(found):
+          self.time.append(weightedAStar.time)
+          self.pathlength.append(weightedAStar.pathlength)
+          self.nodeexpanded.append(weightedAStar.nodeexpanded)
+          self.memreqs.append(asizeof(weightedAStar) / 1000)
+
+    self.calculateAverage(11)
+    self.printDot()
+
+
+  # Weighted AStar algorithm using Chebyshev heuristic with a weight of 1.25
+  def weightedAStarChebyshev1(self):
+    for i in range(10):
+      with WeightedAStar(self.grid, Formulas.ChebyshevDistance, self.weight1, i) as weightedAStar:
+        found = weightedAStar.search()
+        if(found):
+          self.time.append(weightedAStar.time)
+          self.pathlength.append(weightedAStar.pathlength)
+          self.nodeexpanded.append(weightedAStar.nodeexpanded)
+          self.memreqs.append(asizeof(weightedAStar) / 1000)
+
+    self.calculateAverage(12)
+    self.printDot()
+
+
+  # Weighted AStar algorithm using Chebyshev heuristic with a weight of 2.0
+  def weightedAStarChebyshev2(self):
+    for i in range(10):
+      with WeightedAStar(self.grid, Formulas.ChebyshevDistance, self.weight2, i) as weightedAStar:
+        found = weightedAStar.search()
+        if(found):
+          self.time.append(weightedAStar.time)
+          self.pathlength.append(weightedAStar.pathlength)
+          self.nodeexpanded.append(weightedAStar.nodeexpanded)
+          self.memreqs.append(asizeof(weightedAStar) / 1000)
+
+    self.calculateAverage(13)
     self.printDot()

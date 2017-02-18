@@ -3,8 +3,8 @@ import Algorithms.Base.Formulas as Formulas
 from Algorithms.Base.SingleSearch import SingleSearch
 
 class UniformCost(SingleSearch):
-  def __init__(self, grid, start, goal):
-    super().__init__(grid, start, goal)
+  def __init__(self, grid, i=-1):
+    super().__init__(grid, Formulas.NoHeuristic, i)
 
     
   # Start the algoirthm. Searches for the best path based on the heuristic.
@@ -28,6 +28,7 @@ class UniformCost(SingleSearch):
       # Goal found, stop the loop
       if(s == self.goal):
         self.time = int(round(time.time() * 1000)) - startTime
+        self.pathlength = self.goal.G
         return True
 
       # Add it to visited list

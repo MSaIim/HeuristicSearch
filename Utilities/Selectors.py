@@ -55,6 +55,63 @@ class StartGoalSelector(Form):
     # Close the box
     self.close()
 
+# /*\ =======================================================================
+# |*| ASTAR HEURISTIC SELECTOR
+# |*|   - Opens a window with a dropdown list with different heuristics.
+# \*/ =======================================================================
+class AStarSelector(Form):
+  # List of heuristics
+  heuristics = ['AStar Default', 'Manhattan Distance', 'Euclidean Distance', 'Chebyshev Distance', 'Diagonal Distance']
+
+  # Construct the window
+  def __init__(self):
+    super().__init__("A* Setup", 400, 170)
+    self.heuristic = None
+
+    # Information row
+    infoRow = Frame(self)
+    infoRow.pack(fill=X)
+    heuristicLabel = Label(infoRow, text="Please select a heuristic. Weight will be 1.")
+    heuristicLabel.config(font=("Calibri", 12))
+    heuristicLabel.pack(side=LEFT, padx=(50, 0), pady=20)
+
+    # Heuristic row
+    heuristicRow = Frame(self)
+    heuristicRow.pack(fill=X)
+    heuristicLabel = Label(heuristicRow, text="Heuristics:")
+    heuristicLabel.pack(side=LEFT, padx=(30, 10), pady=5)
+    self.combobox = Combobox(heuristicRow, state="readonly", values=self.heuristics)
+    self.combobox.bind("<<ComboboxSelected>>")
+    self.combobox.set("AStar Default")
+    self.combobox.pack(fill=X, padx=(0, 40), expand=True)
+
+    # Button row
+    buttonRow = Frame(self)
+    buttonRow.pack(fill=X)
+    cancelButton = Button(buttonRow, text="Cancel", command=self.close)
+    cancelButton.pack(side=RIGHT, padx=(0, 40), pady=(20, 0))
+    selectButton = Button(buttonRow, text="Submit", command=self.submit)
+    selectButton.pack(side=RIGHT, padx=(0, 0), pady=(20, 0))
+
+    # Run the main loop to show window
+    self.root.mainloop()
+
+
+  # Get the values from the combobox and the text entry when user presses "Select"
+  def submit(self):
+    if(self.combobox.get() == "AStar Default"):
+      self.heuristic = Formulas.AStarHeuristic
+    elif(self.combobox.get() == "Manhattan Distance"):
+      self.heuristic = Formulas.ManhattanDistance
+    elif(self.combobox.get() == "Euclidean Distance"):
+      self.heuristic = Formulas.EuclideanDistance
+    elif(self.combobox.get() == "Chebyshev Distance"):
+      self.heuristic = Formulas.ChebyshevDistance
+    elif(self.combobox.get() == "Diagonal Distance"):
+      self.heuristic = Formulas.DiagonalDistance
+
+    self.close()
+
 
 # /*\ =======================================================================
 # |*| HEURISTIC SELECTOR
@@ -62,7 +119,7 @@ class StartGoalSelector(Form):
 # |*|     box. Can choose which heuristic the algorithm will run.
 # \*/ =======================================================================
 class WeightedSelector(Form):
-  # Reference var of window and list of heuristics
+  # List of heuristics
   heuristics = ['AStar Default', 'Manhattan Distance', 'Euclidean Distance', 'Chebyshev Distance', 'Diagonal Distance']
 
   # Construct the window

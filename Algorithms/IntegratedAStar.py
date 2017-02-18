@@ -7,8 +7,8 @@ from Algorithms.Base.ManySearch import ManySearch
 
 
 class IntegratedAStar(ManySearch):
-  def __init__(self, grid, start, goal, n, w1, w2, heuristics):
-    super().__init__(grid, start, goal, n, w1, w2, heuristics)
+  def __init__(self, grid, n, w1, w2, heuristics, i=-1):
+    super().__init__(grid, n, w1, w2, heuristics, i)
 
     # For benchmarks
     self.nodeExAnchor = 0
@@ -48,6 +48,7 @@ class IntegratedAStar(ManySearch):
           if (self.cells[self.goal.X, self.goal.Y].G <= self.fringe[i].peek()[0]):
             if (self.cells[self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
+              self.pathlength = self.cells[self.goal.X, self.goal.Y].G
               return True
 
           # G value of ith search process is further away than anchor
@@ -64,6 +65,7 @@ class IntegratedAStar(ManySearch):
           if (self.cells[self.goal.X, self.goal.Y].G <= self.fringe[0].peek()[0]):
             if (self.cells[self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
+              self.pathlength = self.cells[self.goal.X, self.goal.Y].G
               return True
 
           # Anchor priority is higher but G value is lower
@@ -136,7 +138,6 @@ class IntegratedAStar(ManySearch):
   def getPath(self):
     searchPath = []
     append = searchPath.append
-    done = False
     cell = self.cells[self.goal.X, self.goal.Y]
 
     # Trace path back to start

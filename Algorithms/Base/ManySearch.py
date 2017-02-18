@@ -5,19 +5,19 @@ from abc import ABC, abstractmethod
 
 # Abstract class ManySearch
 class ManySearch(ABC):
-  def __init__(self, grid, start, goal, n, w1, w2, heuristics):
+  def __init__(self, grid, n, w1, w2, heuristics, i):
     # Reset the grid
     grid.resetAlgoCells()
 
     # Initial setup
     self.grid = grid.cells
-    self.start = start
-    self.goal = goal
     self.n = n
     self.w1 = w1
     self.w2 = w2
     self.heuristics = heuristics
     self.time = 0
+    self.start = grid.currentStart if i == -1 else grid.startLocations[i]
+    self.goal = grid.currentGoal if i == -1 else grid.goalLocations[i]
 
     # For benchmarks
     self.pathlength = 0
