@@ -14,11 +14,10 @@ def NoHeuristic(s, goal):
   return 0
 
 def AStarHeuristic(s, goal):
-  a = math.sqrt(2)
   min_XY = min(abs(s.X - goal.X), abs(s.Y - goal.Y))
   max_XY = max(abs(s.X - goal.X), abs(s.Y - goal.Y))
 
-  return (a * min_XY) + max_XY - min_XY
+  return (1.41421356237 * min_XY) + max_XY - min_XY
 
 # Optimized for the vertical and horizontal path
 def ManhattanDistance(s, goal):
