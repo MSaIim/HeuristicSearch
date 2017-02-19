@@ -19,8 +19,12 @@ class ManySearch(ABC):
     self.start = grid.currentStart if i == -1 else grid.startLocations[i]
     self.goal = grid.currentGoal if i == -1 else grid.goalLocations[i]
 
+    # Path list
+    self.searchPath = []
+
     # For benchmarks
     self.pathlength = 0
+    self.nodeexpanded = 0
 
     # Array of fringes, open and closed lists of booleans
     self.fringe = np.array([Algorithms.Base.Heap.PriorityQueue() for x in range(n)])
@@ -31,6 +35,32 @@ class ManySearch(ABC):
   @abstractmethod
   def search(self):
     pass
+
+
+  # Get the path from start to the goal
+  def getPath(self):
+    return self.searchPath
+
+
+  # Trace the path from the start to the goal
+  def tracePath(self, cellData):
+    append = self.searchPath.append
+    cell = cellData[self.goal.X, self.goal.Y]
+
+    # Trace path back to start
+    while cell is not self.start:
+      append(cell)
+      cell = cellData[cell.X, cell.Y].Parent
+
+    # Assign f, g, h values
+    for row in range(Constants.ROWS):
+      for col in range(Constants.COLUMNS):
+        self.grid[row, col].F = cellData[row, col].F
+        self.grid[row, col].G = cellData[row, col].G
+        self.grid[row, col].H = cellData[row, col].H
+
+    # For benchmarks
+    self.pathlength = cellData[self.goal.X, self.goal.Y].G
 
 
   # For use with the "as" statement in the "with" clause

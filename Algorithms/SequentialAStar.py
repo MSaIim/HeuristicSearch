@@ -10,10 +10,6 @@ class SequentialAStar(ManySearch):
   def __init__(self, grid, n, w1, w2, heuristics, i=-1):
     super().__init__(grid, n, w1, w2, heuristics, i)
 
-    # Initial setup
-    self.endIndex = 0
-    self.nodeexpanded = np.array([0 for x in range(n)])
-
     # Cell list of 2D arrays, Closed list of 2D arrays, Sprime tracker list of 2D arrays
     self.cells = np.array([np.asmatrix([[AlgoCell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
     self.closedList = np.array([np.asmatrix([[False for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)]) for z in range(n)])
@@ -47,7 +43,7 @@ class SequentialAStar(ManySearch):
             if (self.cells[i][self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
               self.pathlength = self.cells[i][self.goal.X, self.goal.Y].G
-              self.endIndex = i
+              self.tracePath(self.cells[i])
               return True
 
           # G value of ith search process is further away than anchor
@@ -55,7 +51,7 @@ class SequentialAStar(ManySearch):
             s = self.fringe[i].pop()[1]
             self.openList[i][s.X, s.Y] = False
             self.ExpandState(s, i)
-            self.nodeexpanded[i] += 1
+            self.nodeexpanded += 1
             self.closedList[i][s.X, s.Y] = True
 
         # Anchor priority is higher
@@ -65,7 +61,7 @@ class SequentialAStar(ManySearch):
             if (self.cells[0][self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
               self.pathlength = self.cells[0][self.goal.X, self.goal.Y].G
-              self.endIndex = 0
+              self.tracePath(self.cells[0])
               return True
 
           # Anchor priority is higher but G value is lower
@@ -73,7 +69,7 @@ class SequentialAStar(ManySearch):
             s = self.fringe[0].pop()[1]
             self.openList[0][s.X, s.Y] = False
             self.ExpandState(s, 0)
-            self.nodeexpanded[0] += 1
+            self.nodeexpanded += 1
             self.closedList[0][s.X, s.Y] = True
 
     # No path found
@@ -119,27 +115,3 @@ class SequentialAStar(ManySearch):
     self.cells[i][s.X, s.Y].H = self.heuristics[i](s, self.goal)
     self.cells[i][s.X, s.Y].F = self.cells[i][s.X, s.Y].G + self.cells[i][s.X, s.Y].H
     return self.cells[i][s.X, s.Y].G + self.w1 * self.cells[i][s.X, s.Y].H
-
-
-  # Get the path from the start to the goal
-  def getPath(self):
-    searchPath = []
-    append = searchPath.append
-    cell = self.cells[self.endIndex][self.goal.X, self.goal.Y]
-
-    # Trace path back to start
-    while cell is not self.start:
-      append(cell)
-      cell = self.cells[self.endIndex][cell.X, cell.Y].Parent
-
-    # Assign f, g, h values
-    for row in range(Constants.ROWS):
-      for col in range(Constants.COLUMNS):
-        self.grid[row, col].F = self.cells[self.endIndex][row, col].F
-        self.grid[row, col].G = self.cells[self.endIndex][row, col].G
-        self.grid[row, col].H = self.cells[self.endIndex][row, col].H
-
-    # For benchmarks
-    self.pathlength = self.cells[self.endIndex][self.goal.X, self.goal.Y].G
-
-    return searchPath

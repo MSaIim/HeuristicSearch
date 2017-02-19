@@ -10,10 +10,6 @@ class IntegratedAStar(ManySearch):
   def __init__(self, grid, n, w1, w2, heuristics, i=-1):
     super().__init__(grid, n, w1, w2, heuristics, i)
 
-    # For benchmarks
-    self.nodeExAnchor = 0
-    self.nodeExInadm = 0
-
     # Array of grids
     self.cells = np.asmatrix([[AlgoCell(x, y) for y in range(Constants.COLUMNS)] for x in range(Constants.ROWS)])
 
@@ -49,6 +45,7 @@ class IntegratedAStar(ManySearch):
             if (self.cells[self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
               self.pathlength = self.cells[self.goal.X, self.goal.Y].G
+              self.tracePath(self.cells)
               return True
 
           # G value of ith search process is further away than anchor
@@ -56,7 +53,7 @@ class IntegratedAStar(ManySearch):
             s = self.fringe[i].pop()[1]
             self.openList[i][s.X, s.Y] = False
             self.ExpandState(s, i)
-            self.nodeExInadm += 1
+            self.nodeexpanded += 1
             self.closedInadm[s.X, s.Y] = True
 
         # Anchor priority is higher
@@ -66,6 +63,7 @@ class IntegratedAStar(ManySearch):
             if (self.cells[self.goal.X, self.goal.Y].G < math.inf):
               self.time = int(round(time.time() * 1000)) - startTime
               self.pathlength = self.cells[self.goal.X, self.goal.Y].G
+              self.tracePath(self.cells)
               return True
 
           # Anchor priority is higher but G value is lower
@@ -73,7 +71,7 @@ class IntegratedAStar(ManySearch):
             s = self.fringe[0].pop()[1]
             self.openList[0][s.X, s.Y] = False
             self.ExpandState(s, 0)
-            self.nodeExAnchor += 1
+            self.nodeexpanded += 1
             self.closedAnchor[s.X, s.Y] = True
 
     # No path found

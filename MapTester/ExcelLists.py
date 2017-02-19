@@ -35,3 +35,25 @@ dataAvgs = [(0, 10), (10, 20), (20, 30), (30, 40), (40, 50), (50, 60), (60, 70),
 
 # For printing averages (Will need to change if adding/removing tests)
 dataAvgIndex = [0, 14, 28, 42, 56, 70, 84, 98, 112, 126, 140, 154, 168]
+
+
+# /*\ ======================================================================================================
+# |*|   PHASE 2 - Includes Sequential A* and Integrated A*
+# \*/ ======================================================================================================
+
+# Headers for sequential and integrated A*
+setIntHeaders = [
+  ("Start", 1, 0), ("Goal", 1, 1), ("Average", 13, 0),
+  ("Sequential A* (Anchor=M, Hueristics=A,E,D,C, Weights=", 0, 3),  ("Time (ms)", 1, 3),  ("Path Length (cost)", 1, 4),  ("Nodes Expanded", 1, 5),  ("Memory (KB)", 1, 6),
+  ("Sequential A* (Anchor=E, Hueristics=A,M,D,C, Weights=", 0, 8),  ("Time (ms)", 1, 8),  ("Path Length (cost)", 1, 9),  ("Nodes Expanded", 1, 10), ("Memory (KB)", 1, 11),
+  ("Sequential A* (Anchor=M, Hueristics=A,E,D,C, Weights=", 0, 13), ("Time (ms)", 1, 13), ("Path Length (cost)", 1, 14), ("Nodes Expanded", 1, 15), ("Memory (KB)", 1, 16),
+  ("Sequential A* (Anchor=E, Hueristics=A,M,D,C, Weights=", 0, 18), ("Time (ms)", 1, 18), ("Path Length (cost)", 1, 19), ("Nodes Expanded", 1, 20), ("Memory (KB)", 1, 21),
+  ("Integrated A* (Anchor=M, Hueristics=A,E,D,C, Weights=", 0, 23), ("Time (ms)", 1, 23), ("Path Length (cost)", 1, 24), ("Nodes Expanded", 1, 25), ("Memory (KB)", 1, 26),
+  ("Integrated A* (Anchor=E, Hueristics=A,M,D,C, Weights=", 0, 28), ("Time (ms)", 1, 28), ("Path Length (cost)", 1, 29), ("Nodes Expanded", 1, 30), ("Memory (KB)", 1, 31),
+  ("Integrated A* (Anchor=M, Hueristics=A,E,D,C, Weights=", 0, 33), ("Time (ms)", 1, 33), ("Path Length (cost)", 1, 34), ("Nodes Expanded", 1, 35), ("Memory (KB)", 1, 36),
+  ("Integrated A* (Anchor=E, Hueristics=A,M,D,C, Weights=", 0, 38), ("Time (ms)", 1, 38), ("Path Length (cost)", 1, 39), ("Nodes Expanded", 1, 40), ("Memory (KB)", 1, 41),
+]
+
+p2Heuristics = [(18, 1), (19, 1), (20, 1), (21, 1), (22, 1), (23, 1), (24, 1), (25, 1)]
+p2DataCols = [3, 8, 13, 18, 23, 28, 33, 38]
+p2DataAvgIndex = [0, 8, 16, 24, 32, 40, 48, 56]
