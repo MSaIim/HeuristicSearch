@@ -59,6 +59,9 @@ class ManySearch(ABC):
         self.grid[row, col].G = cellData[row, col].G
         self.grid[row, col].H = cellData[row, col].H
 
+    # Set start g value
+    self.grid[self.start.X, self.start.Y].G = 0
+
     # For benchmarks
     self.pathlength = cellData[self.goal.X, self.goal.Y].G
 

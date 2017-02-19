@@ -302,9 +302,9 @@ class GUI(object):
     # Draw text (surface, text, text_color, text_size, x, y)
     if(self.clickedCell is not None):
       self.write_text("".join(["(", str(self.clickedCell.X), ", ", str(self.clickedCell.Y), ")"]), Constants.BLACK, 16, 1130, 65)
-      self.write_text(f'{self.clickedCell.F:.6f}', Constants.BLACK, 16, 1130, 97)
-      self.write_text(f'{self.clickedCell.G:.6f}', Constants.BLACK, 16, 1130, 127)
-      self.write_text(f'{self.clickedCell.H:.2f}', Constants.BLACK, 16, 1130, 157)
+      self.write_text("{:.6f}".format(self.clickedCell.F), Constants.BLACK, 16, 1130, 97)
+      self.write_text("{:.6f}".format(self.clickedCell.G), Constants.BLACK, 16, 1130, 127)
+      self.write_text("{:.2f}".format(self.clickedCell.H), Constants.BLACK, 16, 1130, 157)
 
     # Print the time it took to find path
     self.write_text("".join([str(self.time), " ms"]), Constants.BLACK, 16, 1130, 187)
