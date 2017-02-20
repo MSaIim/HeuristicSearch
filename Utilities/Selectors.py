@@ -19,8 +19,8 @@ class StartGoalSelector(Form):
     infoRow = Frame(self)
     infoRow.pack(fill=X)
     heuristicLabel = Label(infoRow, text="Please select a start and goal pair.")
-    heuristicLabel.config(font=("Calibri", 12))
-    heuristicLabel.pack(side=LEFT, padx=(40,0), pady=20)
+    heuristicLabel.config(font=("Calibri", 10))
+    heuristicLabel.pack(side=LEFT, padx=(35,0), pady=20)
 
     # Radio button row
     self.pairs = [None for x in range(10)]
@@ -65,7 +65,7 @@ class AStarSelector(Form):
 
   # Construct the window
   def __init__(self):
-    super().__init__("A* Setup", 400, 170)
+    super().__init__("A* Setup", 400, 180)
     self.heuristic = None
 
     # Information row
@@ -73,7 +73,7 @@ class AStarSelector(Form):
     infoRow.pack(fill=X)
     heuristicLabel = Label(infoRow, text="Please select a heuristic. Weight will be 1.")
     heuristicLabel.config(font=("Calibri", 12))
-    heuristicLabel.pack(side=LEFT, padx=(50, 0), pady=20)
+    heuristicLabel.pack(side=LEFT, padx=(20, 0), pady=20)
 
     # Heuristic row
     heuristicRow = Frame(self)
@@ -124,7 +124,7 @@ class WeightedSelector(Form):
 
   # Construct the window
   def __init__(self):
-    super().__init__("Weighted A* Setup", 400, 200)
+    super().__init__("Weighted A* Setup", 400, 210)
     self.weight = 0
 
     # Information row
@@ -132,7 +132,7 @@ class WeightedSelector(Form):
     infoRow.pack(fill=X)
     heuristicLabel = Label(infoRow, text="Please select a heuristic and a weight.")
     heuristicLabel.config(font=("Calibri", 12))
-    heuristicLabel.pack(side=LEFT, padx=(70, 0), pady=20)
+    heuristicLabel.pack(side=LEFT, padx=(30, 0), pady=20)
 
     # Heuristic row
     heuristicRow = Frame(self)
@@ -200,7 +200,7 @@ class SeqIntSelector(Form):
 
   # Construct the window
   def __init__(self):
-    super().__init__("Sequential/Integrated A* Setup", 400, 370)
+    super().__init__("Sequential/Integrated A* Setup", 430, 420)
     self.weight1 = 0
     self.weight2 = 0
 
@@ -208,8 +208,8 @@ class SeqIntSelector(Form):
     infoRow = Frame(self)
     infoRow.pack(fill=X)
     infoLabel = Label(infoRow, text="Select anchor, other heuristics, and two weights.")
-    infoLabel.config(font=("Calibri", 12))
-    infoLabel.pack(side=LEFT, padx=(35, 0), pady=20)
+    infoLabel.config(font=("Calibri", 10))
+    infoLabel.pack(side=LEFT, padx=(30, 0), pady=20)
 
     # Anchor row
     anchorRow = Frame(self)
@@ -268,7 +268,7 @@ class SeqIntSelector(Form):
     # Weight2 label row
     weightLabelRow2 = Frame(self)
     weightLabelRow2.pack(fill=X)
-    weightLabel2 = Label(weightLabelRow2, text="Enter weight to prioritize the inadmissable search process:")
+    weightLabel2 = Label(weightLabelRow2, text="Enter weight to prioritize inadmissable search process:")
     weightLabel2.pack(side=LEFT, padx=(30,0), pady=(5, 5))
 
     # Weight entry row 2
