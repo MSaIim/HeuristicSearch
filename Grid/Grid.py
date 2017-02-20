@@ -1,4 +1,4 @@
-import re
+import re, os
 import numpy as np
 import tkinter as tk
 from tkinter import messagebox
@@ -327,7 +327,7 @@ class Grid(object):
   def save(self, file=None):
     # Bring up save dialog box
     if(file is None):
-      file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = "Resources/maps")
+      file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = os.path.realpath("Maps"))
 
     # Check if user clicked cancel
     if file is None or file is '':
@@ -366,7 +366,7 @@ class Grid(object):
   def load(self, file=None):
     # Bring up save dialog box
     if(file is None):
-      file = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = "Resources/maps")
+      file = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = os.path.realpath("Maps"))
 
     # Check if user clicked cancel
     if file is None or file is '':
