@@ -77,6 +77,8 @@ class AlgoRunner(object):
     self.weightedAStarDiagonal2()
     self.weightedAStarChebyshev1()
     self.weightedAStarChebyshev2()
+    self.weightedAStarGiven1()
+    self.weightedAStarGiven2()
 
 
   # Run all phase 1 tests
@@ -109,10 +111,10 @@ class AlgoRunner(object):
 
     # Get values from other maps, if any
     for num in range(1, len(self.mapList)):
-      timeAvgTotal.append(self.avgTime[index+14*num])
-      pathAvgTotal.append(self.avgPath[index+14*num])
-      nodeAvgTotal.append(self.avgNode[index+14*num])
-      memAvgTotal.append(self.avgMem[index+14*num])
+      timeAvgTotal.append(self.avgTime[index+16*num])
+      pathAvgTotal.append(self.avgPath[index+16*num])
+      nodeAvgTotal.append(self.avgNode[index+16*num])
+      memAvgTotal.append(self.avgMem[index+16*num])
 
     # Average them
     self.avgAllTime = sum(timeAvgTotal) / len(timeAvgTotal)
@@ -350,6 +352,36 @@ class AlgoRunner(object):
           self.memreqs.append(asizeof(weightedAStar) / 1000)
 
     self.calculateAverage(13)
+    self.printDot()
+
+
+  # Weighted AStar algorithm using Manhattan heuristic with a weight of 2.0
+  def weightedAStarGiven1(self):
+    for i in range(10):
+      with WeightedAStar(self.grid, Formulas.AStarHeuristic, self.weights[0], i) as weightedAStar:
+        found = weightedAStar.search()
+        if(found):
+          self.time.append(weightedAStar.time)
+          self.pathlength.append(weightedAStar.pathlength)
+          self.nodeexpanded.append(weightedAStar.nodeexpanded)
+          self.memreqs.append(asizeof(weightedAStar) / 1000)
+
+    self.calculateAverage(14)
+    self.printDot()
+
+
+  # Weighted AStar algorithm using Manhattan heuristic with a weight of 2.0
+  def weightedAStarGiven2(self):
+    for i in range(10):
+      with WeightedAStar(self.grid, Formulas.AStarHeuristic, self.weights[1], i) as weightedAStar:
+        found = weightedAStar.search()
+        if(found):
+          self.time.append(weightedAStar.time)
+          self.pathlength.append(weightedAStar.pathlength)
+          self.nodeexpanded.append(weightedAStar.nodeexpanded)
+          self.memreqs.append(asizeof(weightedAStar) / 1000)
+
+    self.calculateAverage(15)
     self.printDot()
 
 

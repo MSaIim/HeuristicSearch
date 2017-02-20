@@ -256,7 +256,7 @@ class GUI(object):
     self.reloadButton = Button("Regenerate Map", 14, Constants.WHITE, 230, 45, 1030, 695, Constants.PINK, Constants.DARK_PINK)                  # Reload button
     self.saveButton = Button("Save Map", 7, Constants.WHITE, 110, 40, 1150, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                     # Save button
     self.loadButton = Button("Load Map", 7, Constants.WHITE, 110, 40, 1030, 650, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                     # Load button
-    self.astarButton = Button("AStar", 12, Constants.WHITE, 180, 35, 1055, 285, Constants.LIGHT_BLUE, Constants.DARK_BLUE)    # AStar button
+    self.astarButton = Button("AStar", 12, Constants.WHITE, 180, 35, 1055, 285, Constants.LIGHT_BLUE, Constants.DARK_BLUE)                      # AStar button
     self.weightedAStarButton = Button("Weighted A*", 12, Constants.WHITE, 180, 35, 1055, 325, Constants.LIGHT_BLUE, Constants.DARK_BLUE)        # Weighted A* button
     self.uniformCostButton = Button("Uniform Cost", 12, Constants.WHITE, 180, 35, 1055, 365, Constants.LIGHT_BLUE, Constants.DARK_BLUE)         # Uniform Cost button
     self.seqAStarButton = Button("Sequential A*", 12, Constants.WHITE, 180, 35, 1055, 405, Constants.LIGHT_BLUE, Constants.DARK_BLUE)           # Sequential A* button
