@@ -1,4 +1,7 @@
-import pygame, os
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
+import pygame
 import Utilities.Constants as Constants
 from tkinter import messagebox
 from Grid.Grid import Grid
@@ -58,7 +61,7 @@ class GUI(object):
           done = True
         else:
           self.handleInput(event)
-    
+
       # Draw the grid and update screen
       self.draw()
       pygame.display.flip()
@@ -88,7 +91,7 @@ class GUI(object):
   def handleInput(self, event):
     if event.type == pygame.MOUSEBUTTONDOWN:
       # Get the position from mouse click
-      pos = pygame.mouse.get_pos()  
+      pos = pygame.mouse.get_pos()
 
       # RELOAD BUTTON CLICKED
       if self.reloadButton.pressed(pos):
@@ -129,7 +132,7 @@ class GUI(object):
 
             self.time = astar.time
             self.write_info(self.clickedCell.X, self.clickedCell.Y)
-        
+
       # WEIGHTED ASTAR BUTTON CLICKED
       elif self.weightedAStarButton.pressed(pos):
         # Ask for heuristic and weight
@@ -208,8 +211,8 @@ class GUI(object):
         # Remove from memory
         del intForm
 
-          
-      # Convert x/y screen coordinates to grid coordinates         
+
+      # Convert x/y screen coordinates to grid coordinates
       column = pos[0] // (Constants.WIDTH + Constants.MARGIN) - 3
       row = pos[1] // (Constants.HEIGHT + Constants.MARGIN) - 3
 
@@ -220,7 +223,7 @@ class GUI(object):
 
   # /*\ =======================================================================
   # |*| SETUP UI ELEMENTS
-  # |*|   - setup_dynamic() Sets up the elements that change due to 
+  # |*|   - setup_dynamic() Sets up the elements that change due to
   # |*|     screen refresh
   # |*|   - setup_static() Sets up elements that don't get effected
   # \*/ =======================================================================
@@ -295,7 +298,7 @@ class GUI(object):
   def write_info(self, row, col):
     # Reset screen
     self.setup_dynamic()
-    
+
     # Update the cell info
     self.clickedCell = self.grid.cells[row, col]
 

@@ -18,8 +18,8 @@ class Grid(object):
     full_width, full_height = Constants.MARGIN + Constants.WIDTH, Constants.MARGIN + Constants.HEIGHT
 
     self.cells = np.asmatrix(
-      [[Cell(x, y, [full_width * y + Constants.MARGIN, full_height * x + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT]) 
-      for y in range(Constants.COLUMNS)] 
+      [[Cell(x, y, [full_width * y + Constants.MARGIN, full_height * x + Constants.MARGIN, Constants.WIDTH, Constants.HEIGHT])
+      for y in range(Constants.COLUMNS)]
       for x in range(Constants.ROWS)])
 
     # Save the start, goal, and the eight hard to traverse centers
@@ -132,7 +132,7 @@ class Grid(object):
     totalHighway = []
     done = False
     startCoord = Point(coord.x, coord.y)
-    
+
     # Initial Placement
     if startCoord.x == Constants.ROWS - 1:
       totalHighway = self.goHighwayDirection(totalHighway, startCoord, Direction.UP)
@@ -192,7 +192,7 @@ class Grid(object):
     append = highwayLine.append
     index = 0
     done = False
-    
+
     # If this is the first point, add it immediately
     if(len(totalHighway) == 0):
       append(point)
@@ -250,7 +250,7 @@ class Grid(object):
       # Check point is not one of the four corners
       if((edges[0] != 0 and edges[1] != 0) or (edges[0] != 0 and edges[1] != 159) or (edges[0] != 119 and edges[1] != 0) or (edges[0] != 119 and edges[1] != 159)):
         found = True
-      
+
     return Point(edges[0], edges[1])
 
 
@@ -330,7 +330,7 @@ class Grid(object):
       file = filedialog.asksaveasfilename(filetypes=[("Map files","*.map")], defaultextension=".map", initialdir = os.path.realpath("Resources/maps"))
 
     # Check if user clicked cancel
-    if file is None or file is '':
+    if file is None or file == '':
       return False
 
     # Write to file
@@ -369,7 +369,7 @@ class Grid(object):
       file = filedialog.askopenfilename(filetypes=[("Map files","*.map")], initialdir = os.path.realpath("Resources/maps"))
 
     # Check if user clicked cancel
-    if file is None or file is '':
+    if file is None or file == '':
       return False
 
     # Write to file
